@@ -3,12 +3,12 @@
 #define esc 27
 //int row=0,col=0;
 //#define pos() printf("%c[%d;%dH",esc,row,col)
-#define cls printf("%c[2J",esc)
+#define cls printf("\033[H\033[J")
 string root;
 
 int main(int argc,char **argv)
 {
-    system("clear"); 
+    cls;
     struct termios initialrsettings, newrsettings;  
     
     int n,n1;
@@ -74,7 +74,7 @@ int main(int argc,char **argv)
         navigate(n,path,namelist,newrsettings,root);
     }
 
-    system("clear");
+    cls;
     cout<<"Thank You!!!"<<endl;
     tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
     return 0;

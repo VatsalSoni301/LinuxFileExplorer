@@ -3,7 +3,7 @@
 #define esc 27
 int row=0,col=0;
 #define pos() printf("%c[%d;%dH",esc,row,col)
-#define cls printf("%c[2J",esc)
+#define cls printf("\033[H\033[J")
 
 int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,string root)
 {
@@ -55,7 +55,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
 	    {
 	    	strcpy(path,root.c_str());
-	    	system("clear");
+	    	cls;
 	    	row=0;
 	    	while(!rootMapping.empty())
 	    		rootMapping.pop();
@@ -75,7 +75,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	if(rootMapping.size()>=1)
 	    	{
 	    		rootMapping.pop();
-		    	system("clear");
+		    	cls;
 		    	string s;
 		    	if(rootMapping.size()==0)
 		    		s=root;
@@ -145,7 +145,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        }
 	        else
 	        {
-	            system("clear");
+	            cls;
 	            string s1="/";
 	            string s=path;
 	            s1=s+s1;
