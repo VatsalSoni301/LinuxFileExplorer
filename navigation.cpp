@@ -37,11 +37,19 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
             }
             else if(ch=='C')  // If right arrow key then DS
             {
-                
+                if(forstk.size()>=1)
+                {
+                	backstk.push(forstk.top());
+                	forstk.pop();
+                }
             }
             else if(ch=='D')  // If left arrow key then DS
             {
-                
+             	if(backstk.size()>=1)
+             	{
+             		forstk.push(backstk.top());
+             		backstk.pop();
+             	}   
             }
 	    }
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
@@ -108,9 +116,16 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        strcpy(temp2,temp.c_str());
 
 	        if(string(namelist[n-row]->d_name)=="..")
+	        {
 	        	rootMapping.pop();
+	        	forstk.push(backstk.top());
+	        	backstk.pop();
+	        }
 	        else if(string(namelist[n-row]->d_name)!=".")
+	        {
 	        	rootMapping.push(temp);
+	        	backstk.push(temp);
+	        }
 
 	        if(stat(temp2,&statObj) < 0)   
 	        {

@@ -65,7 +65,6 @@ int main(int argc,char **argv)
                 fileInfo(path,namelist[n1]->d_name);
         }
     }
-
     
     if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) {
             fprintf(stderr,"Could not set attributes\n");
