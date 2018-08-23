@@ -61,7 +61,8 @@ int main(int argc,char **argv)
                 strcpy(path, s.c_str());
             }
             root=s;
-            fileInfo(path,namelist[n1]->d_name);
+            if(string(namelist[n1]->d_name)!="..")
+                fileInfo(path,namelist[n1]->d_name);
         }
     }
 
