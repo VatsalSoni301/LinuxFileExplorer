@@ -1,15 +1,18 @@
-#include<bits/stdc++.h>
-#include<dirent.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include<time.h>
-using namespace std;
+#include "config.h"
 
-int fileInfo(char* name)
+int fileInfo(char* path,char* name)
 {
 	struct stat statObj;
-    if(stat(name,&statObj) < 0)    
+    char* fname;
+    //cout<<path;
+    string s=string(path)+"/"+string(name);
+    fname=new char[s.length()+1];
+    strcpy(fname, s.c_str());
+    //cout<<fname<<endl;
+    if(stat(fname,&statObj) < 0)    
+    {
         return 1;
+    }
 
     // permission of a file (r-w-x of user,group and other)
 
@@ -29,43 +32,5 @@ int fileInfo(char* name)
 
     printf("   %s", ctime(&statObj.st_mtime)); // last modified date of a file
     //printf("\n");
- 
-}
-
-
-int main(int argc,char **argv)
-{
-    struct dirent **namelist;
-    int n;
-    //printf("%d\n",argc);
-
-    if(argc < 1)
-    {
-        exit(EXIT_FAILURE);
-    }
-    else if (argc == 1)
-    {
-        n=scandir(".",&namelist,NULL,NULL);
-    }
-    else
-    {
-        n = scandir(argv[1], &namelist, NULL,NULL);
-    }
-    if(n < 0)
-    {
-        perror("scandir");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        while (n--)
-        {
-            //printf("%s",namelist[n]->d_name);
-            fileInfo(namelist[n]->d_name);
-            //printf("\n");
-            free(namelist[n]);
-        }
-        free(namelist);
-    }
     return 0;
 }

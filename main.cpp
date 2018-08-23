@@ -1,15 +1,18 @@
-#include<bits/stdc++.h>
-#include<termios.h>
-using namespace std;
+#include "config.h"
 
-
+#define esc 27
+//int row=0,col=0;
+//#define pos() printf("%c[%d;%dH",esc,row,col)
+#define cls printf("%c[2J",esc)
+string root;
 
 int main(int argc,char **argv)
 {
+    system("clear"); 
     struct termios initialrsettings, newrsettings;  
-    struct dirent **namelist;
-    char ch;
-    int n;
+    
+    int n,n1;
+    char* path;
     //printf("%d\n",argc);
 
     tcgetattr(fileno(stdin), &initialrsettings);
@@ -19,31 +22,60 @@ int main(int argc,char **argv)
     newrsettings.c_lflag &= ~ICANON;  // Switch to non-canonical mode 
     newrsettings.c_lflag &= ~ECHO;    // Turn off displaying text
 
-    if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) {
-                fprintf(stderr,"Could not set attributes\n");
-        }
-        else {
-                ch=cin.get();
-                if(ch==27)
-                {
-                   ch=cin.get();
-                    ch=cin.get();
-                    if(ch=='A')
-                        cout<<"UP";
-                    else if(ch=='B')
-                        cout<<"Down";
-                    else if(ch=='C')
-                        cout<<"Right";
-                    else if(ch=='D')
-                        cout<<"Left";
-                }
-                else if(ch==104 || ch==72)
-                    cout<<"home";
-                else if(ch==127)
-                    cout<<"Back";   
-        }
+    struct dirent **namelist;
+    //printf("%d\n",argc);
 
-        tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
-        return 0;
+    if(argc < 1)
+    {
+        exit(EXIT_FAILURE);
+    }
+    else if (argc == 1)
+    {
+        n=scandir(".",&namelist,NULL,alphasort);
+    }
+    else
+    {
+        n = scandir(argv[1], &namelist, NULL,alphasort);
+    }
+    if(n < 0)
+    {
+        perror("scandir");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        n1=n;
+        while (n1--)
+        {
+            string s;
+            if(argc==1)
+            {
+                s=".";
+                path=new char[s.length()+1];
+                strcpy(path, s.c_str());
+            }
+            else
+            {
+                s=argv[1];
+                path=new char[s.length()+1];
+                strcpy(path, s.c_str());
+            }
+            root=s;
+            fileInfo(path,namelist[n1]->d_name);
+        }
+    }
+
+    
+    if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) {
+            fprintf(stderr,"Could not set attributes\n");
+    }
+    else 
+    {
+        navigate(n,path,namelist,newrsettings,root);
+    }
+
+    system("clear");
+    cout<<"Thank You!!!"<<endl;
+    tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
     return 0;
 }
