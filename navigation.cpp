@@ -109,16 +109,17 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 
 	        if(string(namelist[n-row]->d_name)=="..")
 	        	rootMapping.pop();
-	        else
+	        else if(string(namelist[n-row]->d_name)!=".")
 	        	rootMapping.push(temp);
 
 	        if(stat(temp2,&statObj) < 0)   
 	        {
-	        	cout<<"Err"<<temp2	;
+	        	cout<<"Err"<<temp2;
 	        	return 1;
 	        } 
 	        if(!S_ISDIR(statObj.st_mode))
 	        {
+	        	rootMapping.pop();
 	            char *char_array;
 	            string s="xdg-open ";
 	            string s1=temp;   
