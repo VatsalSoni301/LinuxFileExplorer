@@ -11,7 +11,7 @@ int main(int argc,char **argv)
     cls;
     struct termios initialrsettings, newrsettings;  
     
-    int n,n1;
+    int n;
     char* path;
     //printf("%d\n",argc);
 
@@ -44,25 +44,36 @@ int main(int argc,char **argv)
     }
     else
     {
-        n1=n;
-        while (n1--)
+        
+        string s;
+        if(argc==1)
         {
-            string s;
-            if(argc==1)
-            {
-                s=".";
-                path=new char[s.length()+1];
-                strcpy(path, s.c_str());
-            }
+            s=".";
+            path=new char[s.length()+1];
+            strcpy(path, s.c_str());
+        }
+        else
+        {
+            s=argv[1];
+            path=new char[s.length()+1];
+            strcpy(path, s.c_str());
+        }
+        root=s;
+        for(int i=0;i<n-1;i++)
+        {
+            
+            if(string(namelist[i]->d_name)!="..")
+                fileInfo(path,namelist[i]->d_name);
             else
             {
-                s=argv[1];
-                path=new char[s.length()+1];
-                strcpy(path, s.c_str());
+                int x=i;
+                while(x<n-1)
+                {
+                    namelist[x]=namelist[x+1];
+                    x++;
+                }
+                i--;
             }
-            root=s;
-            if(string(namelist[n1]->d_name)!="..")
-                fileInfo(path,namelist[n1]->d_name);
         }
     }
     
@@ -71,7 +82,7 @@ int main(int argc,char **argv)
     }
     else 
     {
-        navigate(n,path,namelist,newrsettings,root);
+        navigate(--n,path,namelist,newrsettings,root);
     }
 
     cls;
