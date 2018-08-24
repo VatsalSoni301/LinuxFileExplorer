@@ -8,6 +8,7 @@ int fileInfo(char* path,char* name)
     register gid_t gid;
     register struct group *g;
     register struct passwd *pw;
+    double size;
     //cout<<path;
     string s=string(path)+"/"+string(name);
     fname=new char[s.length()+1];
@@ -31,21 +32,29 @@ int fileInfo(char* path,char* name)
     printf( (statObj.st_mode & S_IWOTH) ? "w" : "-");
     printf( (statObj.st_mode & S_IXOTH) ? "x" : "-");
 
-    printf("   %s",name); // name of a file
-    printf("   %ld bytes",statObj.st_size); // size of a file
+    size=statObj.st_size/1024.0;
+    printf("\t%10.4f KB",size); // size of a file
 
     uid = geteuid ();
     pw = getpwuid (uid);
     if (pw)
     {
-      printf("   %s",pw->pw_name);
+      printf("\t%s",pw->pw_name);
       
     }
     gid=statObj.st_gid;
     g=getgrgid(gid);
-    printf("   %s",g->gr_name);
+    printf("\t%s",g->gr_name);
 
-    printf("   %s", ctime(&statObj.st_mtime)); // last modified date of a file
-    //printf("\n");
+    string dt=ctime(&statObj.st_mtime);
+    //printf("   %s", ctime(&statObj.st_mtime)); // last modified date of a file
+    printf("\t");
+    for(unsigned int i=0;i<dt.length()-1;i++)
+            printf("%c",dt[i]);
+
+    //strcpy(date,dt.c_str());
+
+    printf("   %s",name); // name of a file
+    printf("\n");
     return 0;
 }

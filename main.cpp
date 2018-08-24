@@ -10,7 +10,8 @@ int main(int argc,char **argv)
 {
     cls;
     struct termios initialrsettings, newrsettings;  
-    
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     int n;
     char* path;
     //printf("%d\n",argc);
@@ -62,9 +63,7 @@ int main(int argc,char **argv)
         for(int i=0;i<n-1;i++)
         {
             
-            if(string(namelist[i]->d_name)!="..")
-                fileInfo(path,namelist[i]->d_name);
-            else
+            if(string(namelist[i]->d_name)=="..")
             {
                 int x=i;
                 while(x<n-1)
@@ -72,8 +71,21 @@ int main(int argc,char **argv)
                     namelist[x]=namelist[x+1];
                     x++;
                 }
-                i--;
+                break;
             }
+        }
+        n--;
+        int n1;
+        if(n<=w.ws_row-2)
+            n1=n-1;
+        else
+            n1=w.ws_row-2;
+        /*cout<<n1<<endl;
+        for(int i=0;i<n1;i++)
+            cout<<i<<endl;*/
+        for(int i=0;i<=n1;i++)
+        {
+            fileInfo(path,namelist[i]->d_name);
         }
     }
     
@@ -82,7 +94,7 @@ int main(int argc,char **argv)
     }
     else 
     {
-        navigate(--n,path,namelist,newrsettings,root);
+        navigate(n,path,namelist,newrsettings,root);
     }
 
     cls;

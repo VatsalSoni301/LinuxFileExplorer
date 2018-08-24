@@ -11,6 +11,7 @@
 #include<termios.h>
 #include<pwd.h>
 #include<grp.h>
+#include <sys/ioctl.h>
 using namespace std;
 
 int fileInfo(char*,char*);

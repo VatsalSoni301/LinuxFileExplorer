@@ -1,7 +1,7 @@
 #include "config.h"
 
 #define esc 27
-int row=1,col=0;
+int row=1,col=0,cur_cursor=1;
 #define pos() printf("%c[%d;%dH",esc,row,col)
 #define cls printf("\033[H\033[J")
 
@@ -9,6 +9,8 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 {
 	char ch;
 	stack<string> rootMapping,backstk,forstk;
+	struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	pos();
 
 	do
@@ -24,20 +26,80 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
                 if(row>=1)
                     pos();
                 else
+                {
                 	row=1;
+                	//pos();
+                }
                 //cout<<row;
             }
             else if(ch=='B')  // If down arrow key then cursor ++;
             {
+            	
+    			//printf ("lines %d\n", w.ws_row);
+    			//printf ("columns %d\n", w.ws_col);
                 row++;
-                if(row<=n)
+                
+                if(cur_cursor+row<=n+1 && row<=w.ws_row-1)
                 	pos();
-                else
+                else if(row>w.ws_row-1 && cur_cursor+row<=n+1)
                 {
-                	row=1;
+                	cls;
+                	if(rootMapping.empty())
+		            {
+		            	path=new char[root.length()+1];
+		            	strcpy(path,root.c_str());
+		            	int n1;
+		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	if(n<=w.ws_row-2)
+		            		n1=n-2;
+		            	else
+		            		n1=w.ws_row-2;
+		            	for(int i=0;i<n-1;i++)
+		            	{
+		            		if(string(namelist[i]->d_name)=="..")
+		            		{
+		                		int x=i;
+	                			while(x<n-1)
+	                			{
+	                    			namelist[x]=namelist[x+1];
+	                    			x++;
+	                			}
+	                			i--;
+	                			break;
+		                	}
+		            	}
+		            	n--;
+		            	for(int i=cur_cursor;i<=cur_cursor+n1 && i<n;i++)
+		            	{
+		            		fileInfo(path,namelist[i]->d_name);
+		            	}
+		            	
+		            }
+		            else
+		            {
+		            	string s=rootMapping.top();
+		            	path=new char[s.length()+1];
+		            	strcpy(path,s.c_str());	
+		            	int n1;
+		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	if(n<=w.ws_row-2)
+		            		n1=n-1;
+		            	else
+		            		n1=w.ws_row-2;
+		            	for(int i=cur_cursor;i<=cur_cursor+n1 && i<n;i++)
+		            	{		
+		            		fileInfo(path,namelist[i]->d_name);
+		            	}
+		            }
+
+                	cur_cursor++;
+                	
+                	row--;
                 	pos();
+
                 }
-                //cout<<n;
+                else
+                	row--;
             }
             else if(ch=='C')  // If right arrow key then DS
             {
@@ -73,15 +135,22 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    			strcpy(root1,s.c_str());
 	    			n = scandir(root1, &namelist, NULL,alphasort);
             		// need to implement
+
+	    			for(int i=0;i<n;i++)
+	            	{		
+	            		fileInfo(root1,namelist[i]->d_name);
+	            	}
+
             		row=1;
 	    			pos();
-             	}*/  
+             	}*/
             }
 	    }
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
 	    {
 	    	
 	    	cls;
+	    	cur_cursor=1;
 	    	//if(!rootMapping.empty())
 	    		//backstk.push(rootMapping.top());
 	    	while(!rootMapping.empty())
@@ -91,12 +160,15 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	strcpy(root1,root.c_str());
 	    	n = scandir(root1, &namelist, NULL,alphasort);
             
+        	int n1;
+        	if(n<=w.ws_row-2)
+        		n1=n-2;
+        	else
+        		n1=w.ws_row-2;
         	for(int i=0;i<n-1;i++)
         	{
-        		if(string(namelist[i]->d_name)!="..")
-        			fileInfo(root1,namelist[i]->d_name);
-        		else
-            	{
+        		if(string(namelist[i]->d_name)=="..")
+        		{
             		int x=i;
         			while(x<n-1)
         			{
@@ -104,9 +176,14 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
             			x++;
         			}
         			i--;
+        			break;
             	}
         	}
         	n--;
+        	for(int i=0;i<=n1 && i<n;i++)
+        	{
+        		fileInfo(root1,namelist[i]->d_name);
+        	}
            
             row=1;
             pos();
@@ -116,6 +193,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	if(rootMapping.size()>=1)
 	    	{
 	    		//backstk.push(rootMapping.top());
+	    		cur_cursor=1;
 	    		rootMapping.pop();
 		    	cls;
 		    	string s;
@@ -128,12 +206,16 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	            n = scandir(path, &namelist, NULL,alphasort);
 	            if(rootMapping.empty())
 	            {
+	            	
+	            	int n1;
+	            	if(n<=w.ws_row-2)
+	            		n1=n-2;
+	            	else
+	            		n1=w.ws_row-2;
 	            	for(int i=0;i<n-1;i++)
 	            	{
-	            		if(string(namelist[i]->d_name)!="..")
-	            			fileInfo(path,namelist[i]->d_name);
-	            		else
-	                	{
+	            		if(string(namelist[i]->d_name)=="..")
+	            		{
 	                		int x=i;
                 			while(x<n-1)
                 			{
@@ -141,13 +223,24 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
                     			x++;
                 			}
                 			i--;
+                			break;
 	                	}
 	            	}
 	            	n--;
+	            	for(int i=0;i<=n1 && i<n;i++)
+	            	{
+	            		fileInfo(path,namelist[i]->d_name);
+	            	}
+	            	
 	            }
 	            else
 	            {
-	            	for(int i=0;i<n;i++)
+	            	int n1;
+	            	if(n<=w.ws_row-2)
+	            		n1=n-1;
+	            	else
+	            		n1=w.ws_row-2;
+	            	for(int i=0;i<=n1;i++)
 	            	{		
 	            		fileInfo(path,namelist[i]->d_name);
 	            	}
@@ -166,7 +259,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        
 	        string temp,temp1;
 	        char *temp2;
-	        if(string(namelist[row-1]->d_name)=="..")
+	        if(string(namelist[cur_cursor+row-2]->d_name)=="..")
 	        {
 	        	//backstk.push(rootMapping.top());
 	        	rootMapping.pop();
@@ -177,11 +270,11 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        	
 	        	temp2=new char[temp.length()+1];
 	        }
-	        else if(string(namelist[row-1]->d_name)!=".")
+	        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 	        {
 	        	
 	        	temp="/";
-	        	temp1=namelist[row-1]->d_name;
+	        	temp1=namelist[cur_cursor+row-2]->d_name;
 	        	temp1=temp+temp1;
 	        	if(rootMapping.empty())
 	        		temp=root;
@@ -211,28 +304,24 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	            strcpy(char_array, s.c_str()); 
 	            system(char_array);
 	        }
-	        else if(string(namelist[row-1]->d_name)!=".")
+	        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 	        {
 	            cls;
-	            /*string s1="/";
-	            string s=path;
-	            s1=s+s1;
-	            s=namelist[row-1]->d_name;
-	            s1=s1+s;
-	            
-	            path=new char[s1.length()+1];
-	            strcpy(path, s1.c_str());*/
-	            n = scandir(temp2, &namelist, NULL,alphasort);
-	            
-	            //cout<<"*****"<<path;
-	            if(rootMapping.empty())
+	            cur_cursor=1;
+
+            	if(rootMapping.empty())
 	            {
+	            	
+	            	int n1;
+	            	n = scandir(temp2, &namelist, NULL,alphasort);
+	            	if(n<=w.ws_row-2)
+	            		n1=n-2;
+	            	else
+	            		n1=w.ws_row-2;
 	            	for(int i=0;i<n-1;i++)
 	            	{
-	            		if(string(namelist[i]->d_name)!="..")
-	            			fileInfo(temp2,namelist[i]->d_name);
-	            		else
-	                	{
+	            		if(string(namelist[i]->d_name)=="..")
+	            		{
 	                		int x=i;
                 			while(x<n-1)
                 			{
@@ -240,13 +329,25 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
                     			x++;
                 			}
                 			i--;
+                			break;
 	                	}
 	            	}
 	            	n--;
+	            	for(int i=0;i<=n1 && i<n;i++)
+	            	{
+	            		fileInfo(path,namelist[i]->d_name);
+	            	}
+	            	
 	            }
 	            else
 	            {
-	            	for(int i=0;i<n;i++)
+	            	int n1;
+	            	n = scandir(temp2, &namelist, NULL,alphasort);
+	            	if(n<=w.ws_row-2)
+	            		n1=n-1;
+	            	else
+	            		n1=w.ws_row-2;
+	            	for(int i=0;i<=n1;i++)
 	            	{		
 	            		fileInfo(temp2,namelist[i]->d_name);
 	            	}
