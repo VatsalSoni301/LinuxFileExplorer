@@ -9,6 +9,8 @@
 #include<time.h>
 #include<fcntl.h>
 #include<termios.h>
+#include<pwd.h>
+#include<grp.h>
 using namespace std;
 
 int fileInfo(char*,char*);

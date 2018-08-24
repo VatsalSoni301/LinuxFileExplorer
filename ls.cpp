@@ -4,6 +4,10 @@ int fileInfo(char* path,char* name)
 {
 	struct stat statObj;
     char* fname;
+    register uid_t uid;
+    register gid_t gid;
+    register struct group *g;
+    register struct passwd *pw;
     //cout<<path;
     string s=string(path)+"/"+string(name);
     fname=new char[s.length()+1];
@@ -29,6 +33,17 @@ int fileInfo(char* path,char* name)
 
     printf("   %s",name); // name of a file
     printf("   %ld bytes",statObj.st_size); // size of a file
+
+    uid = geteuid ();
+    pw = getpwuid (uid);
+    if (pw)
+    {
+      printf("   %s",pw->pw_name);
+      
+    }
+    gid=statObj.st_gid;
+    g=getgrgid(gid);
+    printf("   %s",g->gr_name);
 
     printf("   %s", ctime(&statObj.st_mtime)); // last modified date of a file
     //printf("\n");
