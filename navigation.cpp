@@ -22,15 +22,66 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
             ch=cin.get();
             if(ch=='A')   // If up arrow key then cursor --;
             {
-                row--;
+                --row;
                 if(row>=1)
                     pos();
-                else
+                else if(cur_cursor>1 && row<1)
                 {
-                	row=1;
-                	//pos();
+                	cls;
+                	cur_cursor--;
+                	if(rootMapping.empty())
+		            {
+		            	path=new char[root.length()+1];
+		            	strcpy(path,root.c_str());
+		            	int n1;
+		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	if(n<=w.ws_row-2)
+		            		n1=n-2;
+		            	else
+		            		n1=w.ws_row-2;
+		            	for(int i=0;i<n-1;i++)
+		            	{
+		            		if(string(namelist[i]->d_name)=="..")
+		            		{
+		                		int x=i;
+	                			while(x<n-1)
+	                			{
+	                    			namelist[x]=namelist[x+1];
+	                    			x++;
+	                			}
+	                			i--;
+	                			break;
+		                	}
+		            	}
+		            	n--;
+		            	for(int i=cur_cursor-1;i<=cur_cursor+n1-1 && i<n;i++)
+		            	{
+		            		fileInfo(path,namelist[i]->d_name);
+		            	}
+		            	
+		            }
+		            else
+		            {
+		            	string s=rootMapping.top();
+		            	path=new char[s.length()+1];
+		            	strcpy(path,s.c_str());	
+		            	int n1;
+		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	if(n<=w.ws_row-2)
+		            		n1=n-1;
+		            	else
+		            		n1=w.ws_row-2;
+		            	for(int i=cur_cursor-1;i<=cur_cursor+n1-1 && i<n;i++)
+		            	{		
+		            		fileInfo(path,namelist[i]->d_name);
+		            	}
+		            }
+		            row=1;
+		            pos();
                 }
-                //cout<<row;
+                else
+                	row=1;
+                //cout<<row<<"  "<<cur_cursor;
             }
             else if(ch=='B')  // If down arrow key then cursor ++;
             {
@@ -124,7 +175,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
             }
             else if(ch=='D')  // If left arrow key then DS
             {
-             	/*if(backstk.size()>=1)
+             	if(backstk.size()>=1)
              	{
              		forstk.push(backstk.top());
              		string s=backstk.top();
@@ -143,7 +194,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 
             		row=1;
 	    			pos();
-             	}*/
+             	}
             }
 	    }
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
@@ -151,8 +202,12 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	
 	    	cls;
 	    	cur_cursor=1;
-	    	//if(!rootMapping.empty())
-	    		//backstk.push(rootMapping.top());
+	    	if(!rootMapping.empty())
+	    		backstk.push(rootMapping.top());
+
+	    	while(!forstk.empty())
+	    		forstk.pop();
+
 	    	while(!rootMapping.empty())
 	    		rootMapping.pop();
 	   
@@ -192,7 +247,9 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    {
 	    	if(rootMapping.size()>=1)
 	    	{
-	    		//backstk.push(rootMapping.top());
+	    		backstk.push(rootMapping.top());
+	    		while(!forstk.empty())
+	    			forstk.pop();
 	    		cur_cursor=1;
 	    		rootMapping.pop();
 		    	cls;
@@ -261,7 +318,9 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        char *temp2;
 	        if(string(namelist[cur_cursor+row-2]->d_name)=="..")
 	        {
-	        	//backstk.push(rootMapping.top());
+	        	backstk.push(rootMapping.top());
+	        	while(!forstk.empty())
+	    			forstk.pop();
 	        	rootMapping.pop();
 	        	if(rootMapping.empty())
 	        		temp=root;
@@ -280,7 +339,9 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        		temp=root;
 	        	else
 	       			temp=rootMapping.top();
-	       		//backstk.push(temp);
+	       		backstk.push(temp);
+	       		while(!forstk.empty())
+	    			forstk.pop();
 	        	temp=temp+temp1;
 	        	temp2=new char[temp.length()+1];
 	        	rootMapping.push(temp);
