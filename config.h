@@ -16,3 +16,4 @@ using namespace std;
 
 int fileInfo(char*,char*);
 int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,string);
+int commandMode();

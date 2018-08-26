@@ -3,6 +3,7 @@
 #define esc 27
 int row=1,col=0,cur_cursor=1;
 #define pos() printf("%c[%d;%dH",esc,row,col)
+#define pos1(point) printf("%c[%d;%dH",esc,point,col)
 #define cls printf("\033[H\033[J")
 
 int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,string root)
@@ -12,10 +13,14 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	pos();
-	string current=root;
+	string current=root,display="Normal Mode";
 	backstk.push(root);
 	do
 	{
+		int last_cursor_point=w.ws_row;
+		pos1(last_cursor_point);
+		cout<<display;
+		pos();
 		ch=cin.get();
 	    if(ch==27)
 	    {
@@ -89,6 +94,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
             	
     			//printf ("lines %d\n", w.ws_row);
     			//printf ("columns %d\n", w.ws_col);
+    			
                 row++;
                 
                 if(cur_cursor+row<=n+1 && row<=w.ws_row-1)
@@ -376,7 +382,26 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    }
 	    else if(ch==58)  // If colon(:) then command mode
 	    {
+	    	row=w.ws_row;
 	    	newrsettings.c_lflag &= ICANON;
+	    	newrsettings.c_lflag &= ECHO;
+	    	newrsettings.c_lflag &= ECHOE;
+	    	pos();
+	    	printf("%c[2K", 27);
+	    	cout<<":";
+	    	if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0)
+            	fprintf(stderr,"Could not set attributes\n");
+    		else 
+    		{
+        		commandMode();
+        		printf("%c[2K", 27);
+        		row=0;
+        		pos();
+        		newrsettings.c_lflag &= ~ICANON;
+	    		newrsettings.c_lflag &= ~ECHO;
+	    		if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0)
+            		fprintf(stderr,"Could not set attributes\n");
+    		}
 	    }
 	    else if(ch==10)  // If enter key then open Dir or File
 	    {
@@ -425,9 +450,12 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        {
 	        	
 	            char *char_array;
-	            string s="xdg-open ";
-	            string s1=temp;   
-	            s=s+s1;
+	            //string s1="xdg-mime"
+	            string s="bash -c 'xdg-open "+ temp +"' 2> /dev/null";
+	            //cout<<s<<"***";
+	            //string s="xdg-open ";
+	            //string s1=temp;   
+	            //s=s+s1;
 	            char_array=new char[s.length()+1];
 	            strcpy(char_array, s.c_str()); 
 	            system(char_array);
