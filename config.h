@@ -18,4 +18,5 @@ int fileInfo(char*,char*);
 int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,struct termios initialrsettings,string root);
 int commandMode(int);
 int deleteFile(vector<string> &commandSplit);
+int createFile(vector<string> &commandSplit);
 void MoveCursor(int,int);

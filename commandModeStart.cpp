@@ -61,6 +61,7 @@ int commandMode(int row)
 			}
 			else if(commandSplit[0]=="create_file")
 			{
+				createFile(commandSplit);
 				MoveCursor(row,col);
 			}
 			else if(commandSplit[0]=="create_dir")
