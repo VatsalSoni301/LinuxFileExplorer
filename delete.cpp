@@ -1,15 +1,20 @@
 #include "config.h"
 
-int main()
+int deleteFile(vector<string> &commandSplit)
 {
-	
-    status = remove("abc.txt");
-    
-    if(status!=0)
+	int status;
+    char *remove_argument;
+    for(unsigned i=1;i<commandSplit.size();i++)
     {
-        printf("Unable to delete the filen");
-        perror("Error");
+    	remove_argument= new char[commandSplit[i].length()+1];
+    	strcpy(remove_argument,commandSplit[i].c_str());
+    	status = remove(remove_argument);
+	    if(status!=0)
+	    {
+	        printf("Unable to delete the filen");
+	        perror("Error");
+	    }
     }
-
-	exit(0);
+    
+	return 0;
 }

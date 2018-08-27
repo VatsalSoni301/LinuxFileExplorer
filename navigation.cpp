@@ -391,7 +391,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	newrsettings=initialrsettings;
 	    	newrsettings.c_lflag &= ~ICANON;
     		tcgetattr(fileno(stdin), &newrsettings);
-    		commandMode();
+    		commandMode(w.ws_row);
     		printf("%c[2K", 27);
     		row=0;
     		pos();
