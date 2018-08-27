@@ -6,7 +6,7 @@ int row=1,col=0,cur_cursor=1;
 #define pos1(point) printf("%c[%d;%dH",esc,point,col)
 #define cls printf("\033[H\033[J")
 
-int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,string root)
+int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,struct termios initialrsettings,string root)
 {
 	char ch;
 	stack<string> backstk,forstk;
@@ -383,25 +383,22 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    else if(ch==58)  // If colon(:) then command mode
 	    {
 	    	row=w.ws_row;
-	    	newrsettings.c_lflag &= ICANON;
-	    	newrsettings.c_lflag &= ECHO;
-	    	newrsettings.c_lflag &= ECHOE;
+	    	
 	    	pos();
 	    	printf("%c[2K", 27);
 	    	cout<<":";
-	    	if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0)
-            	fprintf(stderr,"Could not set attributes\n");
-    		else 
-    		{
-        		commandMode();
-        		printf("%c[2K", 27);
-        		row=0;
-        		pos();
-        		newrsettings.c_lflag &= ~ICANON;
-	    		newrsettings.c_lflag &= ~ECHO;
-	    		if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0)
-            		fprintf(stderr,"Could not set attributes\n");
-    		}
+	    	//newrsettings.c_lflag &= ECHO;
+	    	newrsettings=initialrsettings;
+	    	newrsettings.c_lflag &= ~ICANON;
+    		tcgetattr(fileno(stdin), &newrsettings);
+    		commandMode();
+    		printf("%c[2K", 27);
+    		row=0;
+    		pos();
+    		newrsettings=initialrsettings;
+    		newrsettings.c_lflag &= ~ICANON;
+    		newrsettings.c_lflag &= ~ECHO;
+			tcgetattr(fileno(stdin), &newrsettings);		
 	    }
 	    else if(ch==10)  // If enter key then open Dir or File
 	    {

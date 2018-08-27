@@ -94,7 +94,7 @@ int main(int argc,char **argv)
     }
     else 
     {
-        navigate(n,path,namelist,newrsettings,root);
+        navigate(n,path,namelist,newrsettings,initialrsettings,root);
     }
 
     cls;
@@ -102,3 +102,5 @@ int main(int argc,char **argv)
     tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
     return 0;
 }
+
+// http://www.cse.psu.edu/~kxc104/class/cmpen472/11f/hw/hw7/vt100ansi.htm
