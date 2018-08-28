@@ -1,6 +1,6 @@
 #include "config.h"
 
-int deleteFile(vector<string> &commandSplit)
+int deleteDir(vector<string> &commandSplit)
 {
 	int status;
     char *remove_argument;
@@ -8,10 +8,10 @@ int deleteFile(vector<string> &commandSplit)
     {
     	remove_argument= new char[commandSplit[i].length()+1];
     	strcpy(remove_argument,commandSplit[i].c_str());
-    	status = remove(remove_argument);
+    	status = rmdir(remove_argument);
 	    if(status!=0)
 	    {
-	        printf("Unable to delete file");
+	        printf("Unable to delete directory");
 	        perror("Error");
 	    }
     }

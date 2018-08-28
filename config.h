@@ -19,4 +19,6 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 int commandMode(int);
 int deleteFile(vector<string> &commandSplit);
 int createFile(vector<string> &commandSplit);
+int createDir(vector<string> &commandSplit);
+int deleteDir(vector<string> &commandSplit);
 void MoveCursor(int,int);

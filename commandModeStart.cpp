@@ -66,6 +66,7 @@ int commandMode(int row)
 			}
 			else if(commandSplit[0]=="create_dir")
 			{
+				createDir(commandSplit);
 				MoveCursor(row,col);
 			}
 			else if(commandSplit[0]=="delete_file")
@@ -75,6 +76,7 @@ int commandMode(int row)
 			}
 			else if(commandSplit[0]=="delete_dir")
 			{
+				deleteDir(commandSplit);
 				MoveCursor(row,col);
 			}
 			else if(commandSplit[0]=="goto")
