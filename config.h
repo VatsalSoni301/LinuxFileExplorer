@@ -25,4 +25,6 @@ int rename(vector<string> &);
 string stringProcess(string fname);
 void printDirectoryList(string ,string );
 void deleteall(string);
+int copyFile(vector<string> &);
+int moveFile(vector<string> &);
 void MoveCursor(int,int);

@@ -92,7 +92,7 @@ string commandMode(int row,string currentPath,string root)
 			{
 				if(commandSplit.size()>=3)
 				{
-					//copy(commandSplit);
+					copyFile(commandSplit);
 					MoveCursor(row,col);
 				}
 				else
@@ -102,7 +102,7 @@ string commandMode(int row,string currentPath,string root)
 			{
 				if(commandSplit.size()>=3)
 				{
-					//move(commandSplit);
+					moveFile(commandSplit);
 					MoveCursor(row,col);
 				}
 				else
