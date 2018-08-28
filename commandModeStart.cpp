@@ -71,7 +71,15 @@ string commandMode(int row,string currentPath,string root)
 				}
 				i++;
 			}
-			if(flag==1 && commandSplit[0]!="create_dir" && commandSplit[0]!="create_file")
+			if(commandSplit.size()==0)
+			{
+				cout<<endl<<"Invalid Command"<<endl;
+				cout<<":";
+				commandSplit.clear();
+				s="";
+				continue;
+			}
+			else if(flag==1 && commandSplit[0]!="create_dir" && commandSplit[0]!="create_file")
 			{
 				s=stringProcess(s);
 				commandSplit.push_back(s);
@@ -82,90 +90,148 @@ string commandMode(int row,string currentPath,string root)
 			}
 			if(commandSplit[0]=="copy")
 			{
-				//copy(commandSplit);
-				MoveCursor(row,col);
+				if(commandSplit.size()>=3)
+				{
+					//copy(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="move")
 			{
-				//move(commandSplit);
-				MoveCursor(row,col);
+				if(commandSplit.size()>=3)
+				{
+					//move(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="rename")
 			{
-				rename(commandSplit);
-				MoveCursor(row,col);
+				if(commandSplit.size()==3)
+				{
+					rename(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="create_file")
 			{
-				s=stringProcess(commandSplit[commandSplit.size()-1]);
-				commandSplit.pop_back();
-				commandSplit.push_back(s);
-				createFile(commandSplit);
-				MoveCursor(row,col);
+				if(commandSplit.size()>=3)
+				{
+					s=stringProcess(commandSplit[commandSplit.size()-1]);
+					commandSplit.pop_back();
+					commandSplit.push_back(s);
+					createFile(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="create_dir")
 			{
-				s=stringProcess(commandSplit[commandSplit.size()-1]);
-				commandSplit.pop_back();
-				commandSplit.push_back(s);
-				createDir(commandSplit);
-				MoveCursor(row,col);
+				if(commandSplit.size()>=3)
+				{
+					s=stringProcess(commandSplit[commandSplit.size()-1]);
+					commandSplit.pop_back();
+					commandSplit.push_back(s);
+					createDir(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="delete_file")
 			{
-				deleteFile(commandSplit);
-				MoveCursor(row,col);	
+				if(commandSplit.size()>=2)
+				{
+					deleteFile(commandSplit);
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";	
 			}
 			else if(commandSplit[0]=="delete_dir")
 			{
-				vector<string> vc=deleteDir(commandSplit);
-				if(vc.size()>0)
+				if(commandSplit.size()>=2)
 				{
-					//cout<<endl<<endl;
-					for(int i=vc.size()-1;i>=0;i--)
-				    {
-				    	//cout<<vc[i]<<endl;
-				    	char *p=new char[vc[i].length()+1];
-				    	strcpy(p,vc[i].c_str());
-				    	struct stat statObj;
-				    	stat(p,&statObj);
-						if(S_ISDIR(statObj.st_mode))
-						{
-							vector<string> v;
-							v.clear();
-							v.push_back("abc");
-							v.push_back(vc[i]);
-							deleteDir(v);
-						}
-						else
-						{
-							vector<string> v;
-							v.clear();
-							v.push_back("abc");
-							v.push_back(vc[i]);
-							deleteFile(v);
-						}
-				    }
+					vector<string> vc=deleteDir(commandSplit);
+					if(vc.size()>0)
+					{
+						//cout<<endl<<endl;
+						for(int i=vc.size()-1;i>=0;i--)
+					    {
+					    	//cout<<vc[i]<<endl;
+					    	char *p=new char[vc[i].length()+1];
+					    	strcpy(p,vc[i].c_str());
+					    	struct stat statObj;
+					    	stat(p,&statObj);
+							if(S_ISDIR(statObj.st_mode))
+							{
+								vector<string> v;
+								v.clear();
+								v.push_back("abc");
+								v.push_back(vc[i]);
+								deleteDir(v);
+							}
+							else
+							{
+								vector<string> v;
+								v.clear();
+								v.push_back("abc");
+								v.push_back(vc[i]);
+								deleteFile(v);
+							}
+					    }
+					}
+					MoveCursor(row,col);
 				}
-				MoveCursor(row,col);
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="goto")
 			{
-				string path=commandSplit[1];
-				return path;
-				//MoveCursor(row,col);
+				if(commandSplit.size()==2)
+				{
+					string path=commandSplit[1];
+					DIR *d;
+					char *temp2=new char[path.length()+1];
+					strcpy(temp2,path.c_str());
+					d=opendir(temp2);
+					if(!d)
+					{
+						cout<<endl<<"Invalid path"<<endl<<":";
+					}
+					else
+						return path;
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="search")
 			{
-				MoveCursor(row,col);
+				if(commandSplit.size()==2)
+				{
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}
 			else if(commandSplit[0]=="snapshot")
 			{
-				MoveCursor(row,col);
+				if(commandSplit.size()==2)
+				{
+					MoveCursor(row,col);
+				}
+				else
+					cout<<endl<<"Argument Missing"<<endl<<":";
 			}						
 			else
 			{
-				cout<<"Invalid Command";
+				cout<<endl<<"Invalid Command"<<endl;
 			}
 		}
 		commandSplit.clear();

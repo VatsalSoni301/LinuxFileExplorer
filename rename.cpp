@@ -7,7 +7,10 @@ int rename(vector<string> &commandSplit)
 	strcpy(old,commandSplit[1].c_str());
 	strcpy(_new,commandSplit[2].c_str());
    	
-   	rename(old,_new);
-
+   	int status=rename(old,_new);
+   	if(status!=0)
+   	{
+   		cout<<endl<<"No such file exists"<<endl;
+   	}
 	return 0;
 }

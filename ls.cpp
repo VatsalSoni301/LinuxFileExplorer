@@ -16,7 +16,8 @@ int fileInfo(char* path,char* name)
     //cout<<fname<<endl;
     if(stat(fname,&statObj) < 0)    
     {
-        return 1;
+        cout<<"Error";
+        //return 1;
     }
 
     // permission of a file (r-w-x of user,group and other)

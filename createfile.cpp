@@ -10,7 +10,9 @@ int createFile(vector<string> &commandSplit)
     	string s=destination+"/"+commandSplit[i];
     	create_argument= new char[s.length()+1];
     	strcpy(create_argument,s.c_str());
-    	open(create_argument, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IXOTH);
+    	int status=open(create_argument, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IXOTH);
+    	if(status!=0)
+    		cout<<endl<<"Invalid Path"<<endl;
     }
     return 0;
 }

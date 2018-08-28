@@ -10,8 +10,7 @@ int deleteFile(vector<string> &commandSplit)
     	int status=remove(remove_argument);
 	    if(status!=0)
 	    {
-	        printf("Unable to delete file");
-	        perror("Error");
+	        cout<<endl<<"No such file exists"<<endl;
 	    }
     }
     
