@@ -27,6 +27,8 @@ string stringProcess(string fname);
 void printDirectoryList(string ,string );
 void deleteall(string);
 int copyFile(vector<string> &);
+int copyFile1(string,string);
+void copyall(string,string);
 int moveFile(vector<string> &);
 int snapShot(vector<string> &);
 void findall(string);
