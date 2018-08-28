@@ -15,6 +15,5 @@ int deleteDir(vector<string> &commandSplit)
 	        perror("Error");
 	    }
     }
-    
 	return 0;
 }
