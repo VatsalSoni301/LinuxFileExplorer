@@ -11,6 +11,7 @@
 #include<termios.h>
 #include<pwd.h>
 #include<grp.h>
+#include<fstream>
 #include <sys/ioctl.h>
 using namespace std;
 
@@ -27,4 +28,7 @@ void printDirectoryList(string ,string );
 void deleteall(string);
 int copyFile(vector<string> &);
 int moveFile(vector<string> &);
+int snapShot(vector<string> &);
+void findall(string);
+int search(vector<string> &);
 void MoveCursor(int,int);

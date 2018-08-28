@@ -215,6 +215,7 @@ string commandMode(int row,string currentPath,string root)
 			{
 				if(commandSplit.size()==2)
 				{
+					search(commandSplit);
 					MoveCursor(row,col);
 				}
 				else
@@ -222,8 +223,9 @@ string commandMode(int row,string currentPath,string root)
 			}
 			else if(commandSplit[0]=="snapshot")
 			{
-				if(commandSplit.size()==2)
+				if(commandSplit.size()==3)
 				{
+					snapShot(commandSplit);
 					MoveCursor(row,col);
 				}
 				else
