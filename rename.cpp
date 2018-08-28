@@ -1,11 +1,13 @@
 #include "config.h"
 
-int main()
+int rename(vector<string> &commandSplit)
 {
-	
-    int status=rename(old1,new1);
-    if(status!=0)
-    	cout<<"Error";
+	char *old=new char[commandSplit[1].length()+1];
+	char *_new=new char[commandSplit[2].length()+1];
+	strcpy(old,commandSplit[1].c_str());
+	strcpy(_new,commandSplit[2].c_str());
+   	
+   	rename(old,_new);
 
-	exit(0);
+	return 0;
 }

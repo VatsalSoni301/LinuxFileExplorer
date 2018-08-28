@@ -16,10 +16,12 @@ using namespace std;
 
 int fileInfo(char*,char*);
 int navigate(int ,char* ,struct dirent** ,struct termios ,struct termios ,string );
-int commandMode(int);
+string commandMode(int,string,string);
 int deleteFile(vector<string> &);
 int createFile(vector<string> &);
 int createDir(vector<string> &);
 int deleteDir(vector<string> &);
+int rename(vector<string> &);
+string stringProcess(string fname);
 void printDirectoryList(string ,string );
 void MoveCursor(int,int);

@@ -7,9 +7,10 @@ struct dirent **namelist;
 #define pos1(point) printf("%c[%d;%dH",esc,point,col)
 #define cls printf("\033[H\033[J")
 
-int navigate(int n,char* path,struct dirent **namelist1,struct termios newrsettings,struct termios initialrsettings,string root)
+int navigate(int n1,char* path,struct dirent **namelist1,struct termios newrsettings,struct termios initialrsettings,string root)
 {
 	char ch;
+	n=n1;
 	stack<string> backstk,forstk;	//backward stack and forward stack
 	namelist=namelist1;
 	struct winsize w;	// To get terminal property
@@ -231,15 +232,20 @@ int navigate(int n,char* path,struct dirent **namelist1,struct termios newrsetti
 	    	newrsettings=initialrsettings;
 	    	newrsettings.c_lflag &= ~ICANON;	// change settings
     		tcgetattr(fileno(stdin), &newrsettings);
-    		commandMode(w.ws_row);
+    		string getFromCommand=commandMode(w.ws_row,current,root);
     		printf("%c[2K", 27);
     		cls;
     		row=0;
+    		cur_cursor=1;
     		pos();
     		newrsettings=initialrsettings;	
     		newrsettings.c_lflag &= ~ICANON;	// change settings
     		newrsettings.c_lflag &= ~ECHO;
 			tcgetattr(fileno(stdin), &newrsettings);	// load newsettings
+			if(getFromCommand!="")
+			{
+				current=getFromCommand;
+			}
 			printDirectoryList(current,root);		// Print directory and files
 	    }
 	    else if(ch==10)  // If enter key then open Dir or File
