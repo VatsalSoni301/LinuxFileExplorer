@@ -17,7 +17,23 @@ string commandMode(int row,string currentPath,string root)
 		while((ch=cin.get())!=27 && (ch!=10))
 		{
 			cout<<ch;
-			command+=ch;
+			if(ch==127)
+			{
+				if(command.length()<=1)
+				{
+					command="";
+					MoveCursor(row,col);
+					cout<<command;
+				}
+				else
+				{
+					command=command.substr(0,command.length()-1);
+					MoveCursor(row,col);
+					cout<<command;
+				}
+			}
+			else
+				command+=ch;
 		}
 		if(ch==27)
 			return "";
@@ -102,7 +118,35 @@ string commandMode(int row,string currentPath,string root)
 			}
 			else if(commandSplit[0]=="delete_dir")
 			{
-				deleteDir(commandSplit);
+				vector<string> vc=deleteDir(commandSplit);
+				if(vc.size()>0)
+				{
+					//cout<<endl<<endl;
+					for(int i=vc.size()-1;i>=0;i--)
+				    {
+				    	//cout<<vc[i]<<endl;
+				    	char *p=new char[vc[i].length()+1];
+				    	strcpy(p,vc[i].c_str());
+				    	struct stat statObj;
+				    	stat(p,&statObj);
+						if(S_ISDIR(statObj.st_mode))
+						{
+							vector<string> v;
+							v.clear();
+							v.push_back("abc");
+							v.push_back(vc[i]);
+							deleteDir(v);
+						}
+						else
+						{
+							vector<string> v;
+							v.clear();
+							v.push_back("abc");
+							v.push_back(vc[i]);
+							deleteFile(v);
+						}
+				    }
+				}
 				MoveCursor(row,col);
 			}
 			else if(commandSplit[0]=="goto")
@@ -156,6 +200,6 @@ string stringProcess(string fname)
 	{
 		fname=current+"/"+fname;
 	}
-	cout<<"***"<<fname<<"***";
+	//cout<<"***"<<fname<<"***";
 	return fname;
 }
