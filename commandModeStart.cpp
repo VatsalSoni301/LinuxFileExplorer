@@ -1,11 +1,5 @@
 #include "config.h"
  
-void MoveCursor(int row,int col)
-{
-	printf("%c[2K", 27);
-	printf("%c[%d;%dH",27,row,col);
-	cout<<":";
-}
 
 int commandMode(int row)
 {
@@ -98,4 +92,11 @@ int commandMode(int row)
 		}
 
   	}while(true);
+}
+
+void MoveCursor(int row,int col)
+{
+	printf("%c[2K", 27);
+	printf("%c[%d;%dH",27,row,col);
+	cout<<":";
 }

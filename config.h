@@ -15,10 +15,11 @@
 using namespace std;
 
 int fileInfo(char*,char*);
-int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,struct termios initialrsettings,string root);
+int navigate(int ,char* ,struct dirent** ,struct termios ,struct termios ,string );
 int commandMode(int);
-int deleteFile(vector<string> &commandSplit);
-int createFile(vector<string> &commandSplit);
-int createDir(vector<string> &commandSplit);
-int deleteDir(vector<string> &commandSplit);
+int deleteFile(vector<string> &);
+int createFile(vector<string> &);
+int createDir(vector<string> &);
+int deleteDir(vector<string> &);
+void printDirectoryList(string ,string );
 void MoveCursor(int,int);

@@ -1,19 +1,20 @@
 #include "config.h"
 
+int row=1,col=0,cur_cursor=1,n;
+struct dirent **namelist;
 #define esc 27
-int row=1,col=0,cur_cursor=1;
 #define pos() printf("%c[%d;%dH",esc,row,col)
 #define pos1(point) printf("%c[%d;%dH",esc,point,col)
 #define cls printf("\033[H\033[J")
 
-int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettings,struct termios initialrsettings,string root)
+int navigate(int n,char* path,struct dirent **namelist1,struct termios newrsettings,struct termios initialrsettings,string root)
 {
 	char ch;
-	stack<string> backstk,forstk;
-	struct winsize w;
+	stack<string> backstk,forstk;	//backward stack and forward stack
+	namelist=namelist1;
+	struct winsize w;	// To get terminal property
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	pos();
-	string current=root,display="Normal Mode";
+	string current=root,display="Normal Mode";	//current string to store current directory and root for root directory
 	backstk.push(root);
 	do
 	{
@@ -21,20 +22,20 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		pos1(last_cursor_point);
 		cout<<display;
 		pos();
-		ch=cin.get();
+		ch=cin.get();	// when user press key like up/down/left/right/enter/backspace/h
 	    if(ch==27)
 	    {
 	    	ch=cin.get();
             ch=cin.get();
-            if(ch=='A')   // If up arrow key then cursor --;
+            if(ch=='A')   // If up arrow key 
             {
                 --row;
-                if(row>=1)
-                    pos();
-                else if(cur_cursor>1 && row<1)
+                if(row>=1)    // If cursor is not present at first position
+                    pos();	// set cursor position
+                else if(cur_cursor>1 && row<1) // If cursor is at first position and current is not at first window.
                 {
-                	cls;
-                	cur_cursor--;
+                	cls;	// clear screen
+                	cur_cursor--;	//set window position
                 	if(current==root)
 		            {
 		            	path=new char[root.length()+1];
@@ -64,7 +65,6 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		            	{
 		            		fileInfo(path,namelist[i]->d_name);
 		            	}
-		            	
 		            }
 		            else
 		            {
@@ -82,32 +82,32 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		            		fileInfo(path,namelist[i]->d_name);
 		            	}
 		            }
+		            //printDirectoryList(current,root);
 		            row=1;
-		            pos();
+		            pos();	//set cursor position
                 }
-                else
+                else		// If cursor is at first position and current window is first only.
                 	row=1;
                 //cout<<row<<"  "<<cur_cursor;
             }
-            else if(ch=='B')  // If down arrow key then cursor ++;
+            else if(ch=='B')  // If down arrow key 
             {
             	
-    			//printf ("lines %d\n", w.ws_row);
-    			//printf ("columns %d\n", w.ws_col);
-    			
+    			//printf ("lines %d\n", w.ws_row);	Terminal height
+    			//printf ("columns %d\n", w.ws_col);	Terminal width
                 row++;
-                
-                if(cur_cursor+row<=n+1 && row<=w.ws_row-1)
+                if(cur_cursor+row<=n+1 && row<=w.ws_row-1)  // if cursor is not at last position
                 	pos();
-                else if(row>w.ws_row-1 && cur_cursor+row<=n+1)
+                else if(row>w.ws_row-1 && cur_cursor+row<=n+1) // if cursor is at last position and cursor is not at last window.
                 {
-                	cls;
+                	cls;	//clear screen
+                	//printDirectoryList(current,root);
                 	if(root==current)
 		            {
 		            	path=new char[root.length()+1];
 		            	strcpy(path,root.c_str());
 		            	int n1;
-		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	n = scandir(path, &namelist, NULL,alphasort);//store all files and dirctories into namelist from specified path
 		            	if(n<=w.ws_row-2)
 		            		n1=n-2;
 		            	else
@@ -130,8 +130,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		            	for(int i=cur_cursor;i<=cur_cursor+n1 && i<n;i++)
 		            	{
 		            		fileInfo(path,namelist[i]->d_name);
-		            	}
-		            	
+		            	}	
 		            }
 		            else
 		            {
@@ -139,7 +138,7 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		            	path=new char[s.length()+1];
 		            	strcpy(path,s.c_str());	
 		            	int n1;
-		            	n = scandir(path, &namelist, NULL,alphasort);
+		            	n = scandir(path, &namelist, NULL,alphasort);//store all files and dirctories into namelist from specified path
 		            	if(n<=w.ws_row-2)
 		            		n1=n-1;
 		            	else
@@ -149,14 +148,11 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 		            		fileInfo(path,namelist[i]->d_name);
 		            	}
 		            }
-
-                	cur_cursor++;
-                	
+                	cur_cursor++;	//set window position
                 	row--;
-                	pos();
-
+                	pos();	//set cursor position
                 }
-                else
+                else	// if cursor is at last position and also at last window.
                 	row--;
             }
             else if(ch=='C')  // If right arrow key then DS
@@ -165,53 +161,13 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
              	{
              		backstk.push(forstk.top());
              		current=forstk.top();
-             		string s=forstk.top();
-             		cls;
+             		cls;	// clear screen
              		forstk.pop();
              		
-	    			char *root1=new char[s.length()+1];
-	    			strcpy(root1,s.c_str());
-	    			n = scandir(root1, &namelist, NULL,alphasort);
-	    			if(current==root)
-	    			{
-	    				int n1;
-		            	if(n<=w.ws_row-2)
-		            		n1=n-2;
-		            	else
-		            		n1=w.ws_row-2;
-		            	for(int i=0;i<n-1;i++)
-		            	{
-		            		if(string(namelist[i]->d_name)=="..")
-		            		{
-		                		int x=i;
-	                			while(x<n-1)
-	                			{
-	                    			namelist[x]=namelist[x+1];
-	                    			x++;
-	                			}
-	                			i--;
-	                			break;
-		                	}
-		            	}
-		            	n--;
-		            	for(int i=0;i<=n1 && i<n;i++)
-		            	{
-		            		fileInfo(root1,namelist[i]->d_name);
-		            	}
-	    			}
-	    			else
-	    			{
-	    				int n1;
-	            		if(n<=w.ws_row-2)
-	            			n1=n-1;
-	            		else
-	            			n1=w.ws_row-2;
-	            		for(int i=0;i<=n1;i++)
-	            		{		
-	            			fileInfo(root1,namelist[i]->d_name);
-	            		}	
-	    			}
-            		
+	    			//char *root1=new char[s.length()+1];
+	    			//strcpy(root1,s.c_str());
+	    			//n = scandir(root1, &namelist, NULL,alphasort);
+            		printDirectoryList(current,root);	// Print directory and files
             		cur_cursor=1;
             		row=1;
             		pos();
@@ -226,49 +182,10 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
              		backstk.pop();
 	    			string s=backstk.top();
 	    			current=s;
-	    			char *root1=new char[s.length()+1];
-	    			strcpy(root1,s.c_str());
-	    			n = scandir(root1, &namelist, NULL,alphasort);
-	    			if(current==root)
-	    			{
-	    				int n1;
-		            	if(n<=w.ws_row-2)
-		            		n1=n-2;
-		            	else
-		            		n1=w.ws_row-2;
-		            	for(int i=0;i<n-1;i++)
-		            	{
-		            		if(string(namelist[i]->d_name)=="..")
-		            		{
-		                		int x=i;
-	                			while(x<n-1)
-	                			{
-	                    			namelist[x]=namelist[x+1];
-	                    			x++;
-	                			}
-	                			i--;
-	                			break;
-		                	}
-		            	}
-		            	n--;
-		            	for(int i=0;i<=n1 && i<n;i++)
-		            	{
-		            		fileInfo(root1,namelist[i]->d_name);
-		            	}
-	    			}
-	    			else
-	    			{
-	    				int n1;
-	            		if(n<=w.ws_row-2)
-	            			n1=n-1;
-	            		else
-	            			n1=w.ws_row-2;
-	            		for(int i=0;i<=n1;i++)
-	            		{		
-	            			fileInfo(root1,namelist[i]->d_name);
-	            		}
-	    			}
-
+	    			//char *root1=new char[s.length()+1];
+	    			//strcpy(root1,s.c_str());
+	    			//n = scandir(root1, &namelist, NULL,alphasort);	
+	    			printDirectoryList(current,root);	// Print directory and files
             		cur_cursor=1;
             		row=1;
             		pos();
@@ -277,7 +194,6 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    }
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
 	    {
-	    	
 	    	cls;
 	    	cur_cursor=1;
 	    	backstk.push(root);
@@ -285,41 +201,11 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    	while(!forstk.empty()){
 	    		forstk.pop();
 	    	}
-
-	   		current=root;
-	    	char *root1=new char[root.length()+1];
-	    	strcpy(root1,root.c_str());
-	    	n = scandir(root1, &namelist, NULL,alphasort);
-            
-        	int n1;
-        	if(n<=w.ws_row-2)
-        		n1=n-2;
-        	else
-        		n1=w.ws_row-2;
-        	for(int i=0;i<n-1;i++)
-        	{
-        		if(string(namelist[i]->d_name)=="..")
-        		{
-            		int x=i;
-        			while(x<n-1)
-        			{
-            			namelist[x]=namelist[x+1];
-            			x++;
-        			}
-        			i--;
-        			break;
-            	}
-        	}
-        	n--;
-        	for(int i=0;i<=n1 && i<n;i++)
-        	{
-        		fileInfo(root1,namelist[i]->d_name);
-        	}
-           
+           	printDirectoryList(root,root);	// Print directory and files
             row=1;
             pos();
 	    }
-	    else if(ch==127)  // If BackSpace key then DS
+	    else if(ch==127)  // If BackSpace key then 
 	    {
 	    	if(current!=root)
 	    	{
@@ -329,53 +215,8 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    		int f=current.find_last_of("/\\");
 	    		current=current.substr(0,f);
 		    	cls;
-		    	string s;
-		    	s=current;
-		        backstk.push(s);
-		        path=new char[s.length()+1];
-		        strcpy(path,s.c_str());
-	            n = scandir(path, &namelist, NULL,alphasort);
-	            if(s==root)
-	            {
-	            	
-	            	int n1;
-	            	if(n<=w.ws_row-2)
-	            		n1=n-2;
-	            	else
-	            		n1=w.ws_row-2;
-	            	for(int i=0;i<n-1;i++)
-	            	{
-	            		if(string(namelist[i]->d_name)=="..")
-	            		{
-	                		int x=i;
-                			while(x<n-1)
-                			{
-                    			namelist[x]=namelist[x+1];
-                    			x++;
-                			}
-                			i--;
-                			break;
-	                	}
-	            	}
-	            	n--;
-	            	for(int i=0;i<=n1 && i<n;i++)
-	            	{
-	            		fileInfo(path,namelist[i]->d_name);
-	            	}
-	            	
-	            }
-	            else
-	            {
-	            	int n1;
-	            	if(n<=w.ws_row-2)
-	            		n1=n-1;
-	            	else
-	            		n1=w.ws_row-2;
-	            	for(int i=0;i<=n1;i++)
-	            	{		
-	            		fileInfo(path,namelist[i]->d_name);
-	            	}
-	            }
+		        backstk.push(current);
+	            printDirectoryList(current,root);	// Print directory and files
 	            row=1;
 	            pos();
 	    	}
@@ -383,27 +224,27 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	    else if(ch==58)  // If colon(:) then command mode
 	    {
 	    	row=w.ws_row;
-	    	
 	    	pos();
 	    	printf("%c[2K", 27);
 	    	cout<<":";
 	    	//newrsettings.c_lflag &= ECHO;
 	    	newrsettings=initialrsettings;
-	    	newrsettings.c_lflag &= ~ICANON;
+	    	newrsettings.c_lflag &= ~ICANON;	// change settings
     		tcgetattr(fileno(stdin), &newrsettings);
     		commandMode(w.ws_row);
     		printf("%c[2K", 27);
+    		cls;
     		row=0;
     		pos();
-    		newrsettings=initialrsettings;
-    		newrsettings.c_lflag &= ~ICANON;
+    		newrsettings=initialrsettings;	
+    		newrsettings.c_lflag &= ~ICANON;	// change settings
     		newrsettings.c_lflag &= ~ECHO;
-			tcgetattr(fileno(stdin), &newrsettings);		
+			tcgetattr(fileno(stdin), &newrsettings);	// load newsettings
+			printDirectoryList(current,root);		// Print directory and files
 	    }
 	    else if(ch==10)  // If enter key then open Dir or File
 	    {
 	        struct stat statObj;
-	        
 	        string temp,temp1;
 	        char *temp2;
 	        if(string(namelist[cur_cursor+row-2]->d_name)=="..")
@@ -419,7 +260,6 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	        }
 	        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 	        {
-	        	
 	        	temp="/";
 	        	temp1=namelist[cur_cursor+row-2]->d_name;
 	        	temp1=temp+temp1;
@@ -429,90 +269,88 @@ int navigate(int n,char* path,struct dirent **namelist,struct termios newrsettin
 	       		while(!forstk.empty())
 	    			forstk.pop();
 	        	
-	        	temp2=new char[temp.length()+1];
-	        	
-	        	backstk.push(temp);
+	        	temp2=new char[current.length()+1];
+	        	backstk.push(current);  	
 	        }
 	        else
 	        {
 	        	continue;
 	        }
-	        strcpy(temp2,temp.c_str());
+	        strcpy(temp2,current.c_str());
 	        if(stat(temp2,&statObj) < 0)   
 	        {
 	        	cout<<"Error";
 	        	//return 1;
 	        } 
 	        if(!S_ISDIR(statObj.st_mode))
-	        {
-	        	
+	        {	
 	            char *char_array;
-	            //string s1="xdg-mime"
 	            string s="bash -c 'xdg-open "+ temp +"' 2> /dev/null";
-	            //cout<<s<<"***";
-	            //string s="xdg-open ";
-	            //string s1=temp;   
-	            //s=s+s1;
 	            char_array=new char[s.length()+1];
 	            strcpy(char_array, s.c_str()); 
 	            system(char_array);
 	            int f=current.find_last_of("/\\");
 	    		current=current.substr(0,f);
+	    		backstk.pop();
 	        }
 	        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 	        {
-	        	
 	            cls;
 	            cur_cursor=1;
-
-            	if(root==current)
-	            {
-	            	int n1;
-	            	n = scandir(temp2, &namelist, NULL,alphasort);
-	            	if(n<=w.ws_row-2)
-	            		n1=n-2;
-	            	else
-	            		n1=w.ws_row-2;
-	            	for(int i=0;i<n-1;i++)
-	            	{
-	            		if(string(namelist[i]->d_name)=="..")
-	            		{
-	                		int x=i;
-                			while(x<n-1)
-                			{
-                    			namelist[x]=namelist[x+1];
-                    			x++;
-                			}
-                			i--;
-                			break;
-	                	}
-	            	}
-	            	n--;
-	            	for(int i=0;i<=n1 && i<n;i++)
-	            	{
-	            		fileInfo(temp2,namelist[i]->d_name);
-	            	}
-	            	
-	            }
-	            else
-	            {
-	            	int n1;
-	            	n = scandir(temp2, &namelist, NULL,alphasort);
-	            	if(n<=w.ws_row-2)
-	            		n1=n-1;
-	            	else
-	            		n1=w.ws_row-2;
-	            	for(int i=0;i<=n1;i++)
-	            	{		
-	            		fileInfo(temp2,namelist[i]->d_name);
-	            	}
-
-	            }
+	            printDirectoryList(current,root);	// Print directory and files
 	            row=1;
 	            pos();
-	        }
-	        
+	        }  
 	    }
 	}while(ch!=81 && ch!=113);
 	return 0;
+}
+
+void printDirectoryList(string current,string root) // For printing list of files and directories
+{
+	char *path=new char[current.length()+1];
+    strcpy(path,current.c_str());
+    int n1;
+    struct winsize w;	//to get terminal property
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    
+	if(current==root)
+    {
+    	n = scandir(path, &namelist, NULL,alphasort);	//store all files and dirctories into namelist from specified path
+    	if(n<=w.ws_row-2)
+    		n1=n-2;
+    	else
+    		n1=w.ws_row-2;
+    	for(int i=0;i<n-1;i++)
+    	{
+    		if(string(namelist[i]->d_name)=="..")
+    		{
+        		int x=i;
+    			while(x<n-1)
+    			{
+        			namelist[x]=namelist[x+1];
+        			x++;
+    			}
+    			i--;
+    			break;
+        	}
+    	}
+    	n--;
+    	for(int i=0;i<=n1;i++)
+    	{
+    		fileInfo(path,namelist[i]->d_name);
+    	}
+    }
+    else
+    {
+    	n = scandir(path, &namelist, NULL,alphasort);	//store all files and dirctories into namelist from specified path
+    	if(n<=w.ws_row-2)
+    		n1=n-1;
+    	else
+    		n1=w.ws_row-2;
+    	for(int i=0;i<=n1;i++)
+    	{		
+    		fileInfo(path,namelist[i]->d_name);
+    	}
+    }
 }

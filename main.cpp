@@ -17,10 +17,8 @@ int main(int argc,char **argv)
     //printf("%d\n",argc);
 
     tcgetattr(fileno(stdin), &initialrsettings);
-
-    newrsettings = initialrsettings;  // load initial setting of terminal and keep it safe because at the end 
-                                    //we need to revert back those settings.
-    newrsettings.c_lflag &= ~ICANON;  // Switch to non-canonical mode 
+    newrsettings = initialrsettings;  // load initial setting of terminal and keep it safe because at the end                               
+    newrsettings.c_lflag &= ~ICANON;  //we need to revert back those settings. Switch to non-canonical mode 
     newrsettings.c_lflag &= ~ECHO;    // Turn off displaying text
 
     struct dirent **namelist;
@@ -32,7 +30,7 @@ int main(int argc,char **argv)
     }
     else if (argc == 1)
     {
-        n=scandir(".",&namelist,NULL,alphasort);
+        n=scandir(".",&namelist,NULL,alphasort); //store all files and dirctories into namelist from specified path
     }
     else
     {
@@ -85,7 +83,7 @@ int main(int argc,char **argv)
             cout<<i<<endl;*/
         for(int i=0;i<=n1;i++)
         {
-            fileInfo(path,namelist[i]->d_name);
+            fileInfo(path,namelist[i]->d_name); //call file to display information of the file
         }
     }
     
