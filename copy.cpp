@@ -17,14 +17,12 @@ int copyFile(vector<string> &commandSplit)
 
         if(S_ISDIR(statObj.st_mode))
         {
-            vector<string> v;
-            v.clear();
-            v.push_back("create_dir");
             int f=source.find_last_of("/\\");
             string source1=source.substr(f+1,source.length());
-            v.push_back(source1);
-            v.push_back(destination);
-            createDir(v);
+            string s=destination+"/"+source1;
+            char *create_dir_argument=new char[s.length()+1];
+            strcpy(create_dir_argument,s.c_str());
+            mkdir(create_dir_argument, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IXOTH);
             string destination1=destination+"/"+source1;
             copyall(source,destination1);
         }
@@ -105,14 +103,12 @@ void copyall(string source,string destination)
         //cout<<"**"<<sourceconst<<"**";
         if(S_ISDIR(statObj.st_mode) && string(namelist[i]->d_name)!="." && string(namelist[i]->d_name)!="..")
         {
-            vector<string> v;
-            v.clear();
-            v.push_back("create_dir");
-            v.push_back(namelist[i]->d_name);
-            v.push_back(destination);
-            createDir(v);
-            //source=source+"/"+namelist[i]->d_name;
-            //destination=destination+"/"+namelist[i]->d_name;
+            
+            string s=destination+"/"+namelist[i]->d_name;
+            char *create_dir_argument=new char[s.length()+1];
+            strcpy(create_dir_argument,s.c_str());
+            mkdir(create_dir_argument, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IXOTH);
+
             copyall(source+"/"+namelist[i]->d_name,destination+"/"+namelist[i]->d_name);
         }
         else
