@@ -202,7 +202,8 @@ int navigate(int n1,char* path,struct dirent **namelist1,struct termios newrsett
 	    	while(!forstk.empty()){
 	    		forstk.pop();
 	    	}
-           	printDirectoryList(root,root);	// Print directory and files
+	    	current=root;
+           	printDirectoryList(current,root);	// Print directory and files
             row=1;
             pos();
 	    }

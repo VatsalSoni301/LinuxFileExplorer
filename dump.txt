@@ -1,0 +1,10 @@
+./A
+
+AA      
+
+./A/AA
+
+BC      abc.txt      def.txt      
+
+
+

@@ -262,7 +262,13 @@ string stringProcess(string fname)
 	}
 	else if(fname[0]=='/')
 	{
-		fname=home+fname;
+		if(fname=="/")
+		{
+			fname=fname.substr(1,fname.length());
+			fname=home+fname;
+		}
+		else
+			fname=home+fname;
 	}
 	else
 	{
