@@ -53,7 +53,7 @@ string commandMode(int row,string currentPath,string root)
 				}
 				else if(command[i]==32 && commandSplit.size()>=1)
 				{
-					if(s!="" && s!=" " && (commandSplit[0]=="create_file" || commandSplit[0]=="create_dir"))
+					if(s!="" && s!=" " && (commandSplit[0]=="search" || commandSplit[0]=="create_file" || commandSplit[0]=="create_dir"))
 					{
 						commandSplit.push_back(s);
 					}
@@ -79,7 +79,7 @@ string commandMode(int row,string currentPath,string root)
 				s="";
 				continue;
 			}
-			else if(flag==1 && commandSplit[0]!="create_dir" && commandSplit[0]!="create_file")
+			else if(flag==1 && commandSplit[0]!="search" && commandSplit[0]!="create_dir" && commandSplit[0]!="create_file")
 			{
 				s=stringProcess(s);
 				commandSplit.push_back(s);
@@ -215,8 +215,22 @@ string commandMode(int row,string currentPath,string root)
 			{
 				if(commandSplit.size()==2)
 				{
-					search(commandSplit);
-					MoveCursor(row,col);
+					commandSplit.push_back(current);
+					vector<string> ans=search(commandSplit);
+					if(ans.size()>0)
+					{
+						for(unsigned i=0;i<ans.size();i++)
+						{
+							cout<<ans[i]<<endl;
+						}
+						char x;
+						cin>>x;
+						MoveCursor(row,col);
+					}
+					else
+					{
+						cout<<endl<<"No Search Result Found"<<endl<<":";
+					}
 				}
 				else
 					cout<<endl<<"Argument Missing"<<endl<<":";

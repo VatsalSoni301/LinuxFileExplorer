@@ -32,5 +32,6 @@ void copyall(string,string);
 int moveFile(vector<string> &);
 int snapShot(vector<string> &);
 void findall(string);
-int search(vector<string> &);
+void findA(string ,string );
+vector<string> search(vector<string> &);
 void MoveCursor(int,int);
