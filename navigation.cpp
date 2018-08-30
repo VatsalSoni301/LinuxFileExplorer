@@ -228,11 +228,7 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
 	            pos();
 	            cur_cursor=1;
 	    	}
-	    	else if(searchResult.size()>0)
-	    	{
-	    		searchResult.clear();
-	    		//printDirectoryList(current,root);
-	    	}
+	    	
 	    }
 	    else if(ch==58)  // If colon(:) then command mode
 	    {
@@ -288,18 +284,21 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
 	    		if(!S_ISDIR(statObj.st_mode))
 	    		{
 	    			char *char_array;
-		            string s="bash -c 'xdg-open "+ current +"' 2> /dev/null";
+		            string s=current;
 		            char_array=new char[s.length()+1];
 		            strcpy(char_array, s.c_str()); 
 		            system(char_array);
 		            //int f=current.find_last_of("/\\");
 		    		//current=current.substr(0,f);
+		    		pid_t pid=fork();
+		    		if(pid==0)
+		    			execlp("xdg-open","xdg-open",char_array,NULL);
 	    		}
 	    		else
 	    		{
+	    			searchResult.clear();
 	    			printDirectoryList(current,root);
 	    		}
-	    		searchResult.clear();
 	    	}
 	    	else
 	    	{
@@ -344,13 +343,18 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
 		        if(!S_ISDIR(statObj.st_mode))
 		        {	
 		            char *char_array;
-		            string s="bash -c 'xdg-open "+ temp +"' 2> /dev/null";
+		            //string s="bash -c 'xdg-open "+ temp +"' 2> /dev/null";
+		            string s=temp;
 		            char_array=new char[s.length()+1];
 		            strcpy(char_array, s.c_str()); 
-		            system(char_array);
+		            //system(char_array);
 		            int f=current.find_last_of("/\\");
 		    		current=current.substr(0,f);
 		    		backstk.pop();
+
+		    		pid_t pid=fork();
+		    		if(pid==0)
+		    			execlp("xdg-open","xdg-open",char_array,NULL);
 		        }
 		        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 		        {
