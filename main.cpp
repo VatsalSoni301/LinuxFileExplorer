@@ -3,6 +3,7 @@
 #define esc 27
 //int row=0,col=0;
 //#define pos() printf("%c[%d;%dH",esc,row,col)
+struct dirent **namelist;
 #define cls printf("\033[H\033[J")
 string root;
 
@@ -21,7 +22,6 @@ int main(int argc,char **argv)
     newrsettings.c_lflag &= ~ICANON;  //we need to revert back those settings. Switch to non-canonical mode 
     newrsettings.c_lflag &= ~ECHO;    // Turn off displaying text
 
-    struct dirent **namelist;
     //printf("%d\n",argc);
 
     if(argc < 1)
@@ -85,6 +85,7 @@ int main(int argc,char **argv)
         {
             fileInfo(path,namelist[i]->d_name); //call file to display information of the file
         }
+        n--;
     }
     
     if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) {
@@ -92,7 +93,7 @@ int main(int argc,char **argv)
     }
     else 
     {
-        navigate(n,path,namelist,newrsettings,initialrsettings,root);
+        navigate(n,path,newrsettings,initialrsettings,root);
     }
 
     cls;

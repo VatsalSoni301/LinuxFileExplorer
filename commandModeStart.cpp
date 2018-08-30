@@ -1,7 +1,7 @@
 #include "config.h"
 
 string home,current; 
-
+vector<string> searchResult;
 string commandMode(int row,string currentPath,string root)
 {
 	string command="";
@@ -45,7 +45,12 @@ string commandMode(int row,string currentPath,string root)
 			while(i<command.length())
 			{
 				flag=0;
-				if(command[i]==32 && commandSplit.size()==0)
+				if(command[i]=='\\')
+				{
+					s=s+command[i+1];
+					i++;
+				}
+				else if(command[i]==32 && commandSplit.size()==0)
 				{
 					//s=stringProcess(s);
 					commandSplit.push_back(s);
@@ -219,13 +224,23 @@ string commandMode(int row,string currentPath,string root)
 					vector<string> ans=search(commandSplit);
 					if(ans.size()>0)
 					{
-						for(unsigned i=0;i<ans.size();i++)
+						//*namelist=NULL;
+						//*namelist=new struct dirent[ans.size()+1];
+						/*for(unsigned i=0;i<ans.size();i++)
 						{
-							cout<<ans[i]<<endl;
-						}
+							namelist[i]->d_name[ans[i].size()] = '\0';
+							for(unsigned j=0;j<ans[i].size();j++)
+							{
+								namelist[i]->d_name[j]=ans[i][j];
+							}
+							cout<<namelist[i]->d_name<<endl;
+						}*/
+						/*cout<<namelist[1]->d_name;
 						char x;
-						cin>>x;
-						MoveCursor(row,col);
+						cin>>x;*/
+						searchResult=ans;
+						string s="$$";
+						return s;
 					}
 					else
 					{
@@ -248,6 +263,7 @@ string commandMode(int row,string currentPath,string root)
 			else
 			{
 				cout<<endl<<"Invalid Command"<<endl;
+				cout<<":";
 			}
 		}
 		commandSplit.clear();

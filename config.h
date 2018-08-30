@@ -15,8 +15,11 @@
 #include <sys/ioctl.h>
 using namespace std;
 
+extern struct dirent **namelist;
+extern vector<string> searchResult;
+
 int fileInfo(char*,char*);
-int navigate(int ,char* ,struct dirent** ,struct termios ,struct termios ,string );
+int navigate(int ,char* ,struct termios ,struct termios ,string );
 string commandMode(int,string,string);
 int deleteFile(vector<string> &);
 int createFile(vector<string> &);
@@ -35,3 +38,4 @@ void findall(string);
 void findA(string ,string );
 vector<string> search(vector<string> &);
 void MoveCursor(int,int);
+void printsearch();
