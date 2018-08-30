@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int rename(vector<string> &commandSplit)
+int rename(vector<string> &commandSplit)	// It accepts arg from command and rename file/dir 
 {
 	char *old=new char[commandSplit[1].length()+1];
 	char *_new=new char[commandSplit[2].length()+1];

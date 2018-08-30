@@ -1,18 +1,22 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
 int row=1,col=0,cur_cursor=1,n;
 //struct dirent **namelist;
-#define esc 27
-#define pos() printf("%c[%d;%dH",esc,row,col)
-#define pos1(point) printf("%c[%d;%dH",esc,point,col)
-#define cls printf("\033[H\033[J")
+#define esc 27	// ASCII code of ESC
+#define pos() printf("%c[%d;%dH",esc,row,col)	// For cursor move to specified pos.
+#define pos1(point) printf("%c[%d;%dH",esc,point,col)	// For cursor move to end of line
+#define cls printf("\033[H\033[J")	//For clear screen
+struct dirent **namelist;
 
-int navigate(int n1,char* path,struct termios newrsettings,struct termios initialrsettings,string root)
+// For normal mode navigation utility
+int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct termios initialrsettings,string root)
 {
+	char *path;
 	char ch;
 	n=n1;
 	stack<string> backstk,forstk;	//backward stack and forward stack
-	//namelist=namelist1;
+	namelist=namelist1;
 	struct winsize w;	// To get terminal property
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	string current=root,display="Normal Mode";	//current string to store current directory and root for root directory
@@ -37,7 +41,6 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
                 {
                 	cls;	// clear screen
                 	cur_cursor--;	//set window position
-
                 	if(current==root)
 		            {
 		            	path=new char[root.length()+1];
@@ -103,8 +106,7 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
                 	pos();
                 else if(row>w.ws_row-1 && cur_cursor+row<=n+2) // if cursor is at last position and cursor is not at last window.
                 {
-                	cls;	//clear screen
-                	
+                	cls;	//clear screen                	
                 	if(root==current)
 		            {
 		            	path=new char[root.length()+1];
@@ -164,14 +166,24 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
                 if(forstk.size()>=1)
              	{
              		backstk.push(forstk.top());
-             		current=forstk.top();
+             		string s=forstk.top();
              		cls;	// clear screen
              		forstk.pop();
-             		
+             		char *s_ar=new char[s.length()+1];
+	    			strcpy(s_ar,s.c_str());
+	    			DIR *d=opendir(s_ar);
+	    			if(!d)
+	    			{
+	    				// Nothing should happen	
+	    			}
+	    			else
+	    			{
+	    				current=s;
+	    			}
 	    			//char *root1=new char[s.length()+1];
 	    			//strcpy(root1,s.c_str());
 	    			//n = scandir(root1, &namelist, NULL,alphasort);
-            		printDirectoryList(current,root);	// Print directory and files
+	    			printDirectoryList(current,root);	// Print directory and files
             		cur_cursor=1;
             		row=1;
             		pos();
@@ -185,7 +197,15 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
              		cls;
              		backstk.pop();
 	    			string s=backstk.top();
-	    			current=s;
+	    			char *s_ar=new char[s.length()+1];
+	    			strcpy(s_ar,s.c_str());
+	    			DIR *d=opendir(s_ar);
+	    			if(!d)
+	    			{
+	    				// Nothing should happen
+	    			}
+	    			else
+	    				current=s;
 	    			//char *root1=new char[s.length()+1];
 	    			//strcpy(root1,s.c_str());
 	    			//n = scandir(root1, &namelist, NULL,alphasort);	
@@ -227,8 +247,7 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
 	            row=1;
 	            pos();
 	            cur_cursor=1;
-	    	}
-	    	
+	    	}	    	
 	    }
 	    else if(ch==58)  // If colon(:) then command mode
 	    {
@@ -322,8 +341,7 @@ int navigate(int n1,char* path,struct termios newrsettings,struct termios initia
 		        	temp1=namelist[cur_cursor+row-2]->d_name;
 		        	temp1=temp+temp1;
 		        	temp=current+temp1;
-		       		current=temp;
-		       		
+		       		current=temp;		       		
 		       		while(!forstk.empty())
 		    			forstk.pop();
 		        	
@@ -376,50 +394,70 @@ void printDirectoryList(string current,string root) // For printing list of file
     strcpy(path,current.c_str());
     int n1;
     struct winsize w;	//to get terminal property
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);    
 	if(current==root)
     {
     	n = scandir(path, &namelist, NULL,alphasort);	//store all files and dirctories into namelist from specified path
-    	if(n<=w.ws_row-2)
-    		n1=n-2;
-    	else
-    		n1=w.ws_row-2;
-    	for(int i=0;i<n-1;i++)
+    	//cout<<w.ws_row<<" "<<n;
+    	if(n>0)
     	{
-    		if(string(namelist[i]->d_name)=="..")
-    		{
-        		int x=i;
-    			while(x<n-1)
-    			{
-        			namelist[x]=namelist[x+1];
-        			x++;
-    			}
-    			i--;
-    			break;
-        	}
+    		if((w.ws_row-n)==1)
+    			n1=n-2;
+	    	else if(n<=w.ws_row-2)
+	    		n1=n-2;
+	    	else
+	    		n1=w.ws_row-2;
+	    	for(int i=0;i<n-1;i++)
+	    	{
+	    		if(string(namelist[i]->d_name)=="..")
+	    		{
+	        		int x=i;
+	    			while(x<n-1)
+	    			{
+	        			namelist[x]=namelist[x+1];
+	        			x++;
+	    			}
+	    			i--;
+	    			break;
+	        	}
+	    	}
+	    	for(int i=0;i<=n1;i++)
+	    	{
+	    		fileInfo(path,namelist[i]->d_name);
+	    	}
+	    	n=n-2;
     	}
-    	n=n-2;
-    	for(int i=0;i<=n1;i++)
+    	/*else
     	{
-    		fileInfo(path,namelist[i]->d_name);
-    	}
+    		pos1(w.ws_row);
+    		printf("%c[2K", 27);
+			cout<<"No directory exist";	
+    	}*/
     }
     else
     {
     	n = scandir(path, &namelist, NULL,alphasort);	//store all files and dirctories into namelist from specified path
-    	if(n<=w.ws_row-2)
-    		n1=n-1;
-    	else
-    		n1=w.ws_row-2;
-    	for(int i=0;i<=n1;i++)
-    	{		
-    		fileInfo(path,namelist[i]->d_name);
+    	if(n>0)
+    	{
+    		if(n<=w.ws_row-2)
+	    		n1=n-1;
+	    	else
+	    		n1=w.ws_row-2;
+	    	for(int i=0;i<=n1;i++)
+	    	{		
+	    		fileInfo(path,namelist[i]->d_name);
+	    	}
+	    	n--;
     	}
-    	n--;
+    	/*else
+    	{
+    		pos1(w.ws_row);
+    		printf("%c[2K", 27);
+			cout<<"No directory exist";	
+    	}*/
     }
 }
-void printsearch()
+void printsearch()	// For printing search Result
 {
 	n=searchResult.size();
 	int n1;

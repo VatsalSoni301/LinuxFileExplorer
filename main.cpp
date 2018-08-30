@@ -1,17 +1,16 @@
+//2018201005 Vatsal Soni
 #include "config.h"
+#define esc 27 // ASCII code of ESC
 
-#define esc 27
-//int row=0,col=0;
-//#define pos() printf("%c[%d;%dH",esc,row,col)
-struct dirent **namelist;
-#define cls printf("\033[H\033[J")
+#define cls printf("\033[H\033[J") // For clear screen
 string root;
 
-int main(int argc,char **argv)
+int main(int argc,char **argv) // strating point of the project
 {
     cls;
-    struct termios initialrsettings, newrsettings;  
-    struct winsize w;
+    struct dirent **namelist; // For storing list of directory/file list
+    struct termios initialrsettings, newrsettings;  // For terminal settings
+    struct winsize w;   // For terminal properties
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     int n;
     char* path;
@@ -43,7 +42,6 @@ int main(int argc,char **argv)
     }
     else
     {
-        
         string s;
         if(argc==1)
         {
@@ -60,7 +58,6 @@ int main(int argc,char **argv)
         root=s;
         for(int i=0;i<n-1;i++)
         {
-            
             if(string(namelist[i]->d_name)=="..")
             {
                 int x=i;
@@ -87,15 +84,14 @@ int main(int argc,char **argv)
         }
         n--;
     }
-    
-    if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) {
-            fprintf(stderr,"Could not set attributes\n");
+    if(tcsetattr(fileno(stdin), TCSAFLUSH, &newrsettings) != 0) 
+    {
+        fprintf(stderr,"Could not set attributes\n");
     }
     else 
     {
-        navigate(n,path,newrsettings,initialrsettings,root);
+        navigate(n,namelist,newrsettings,initialrsettings,root);
     }
-
     cls;
     cout<<"Thank You!!!"<<endl;
     tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);

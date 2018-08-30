@@ -1,3 +1,4 @@
+//2018201005 Vatsal Soni
 #include<unistd.h>
 #include<stdio.h>
 #include<dirent.h>
@@ -14,28 +15,26 @@
 #include<fstream>
 #include <sys/ioctl.h>
 using namespace std;
+extern vector<string> searchResult;	// For storing search result
 
-extern struct dirent **namelist;
-extern vector<string> searchResult;
-
-int fileInfo(char*,char*);
-int navigate(int ,char* ,struct termios ,struct termios ,string );
-string commandMode(int,string,string);
-int deleteFile(vector<string> &);
-int createFile(vector<string> &);
-int createDir(vector<string> &);
-vector<string> deleteDir(vector<string> &);
-int rename(vector<string> &);
-string stringProcess(string fname);
-void printDirectoryList(string ,string );
-void deleteall(string);
-int copyFile(vector<string> &);
-int copyFile1(string,string);
-void copyall(string,string);
-int moveFile(vector<string> &);
-int snapShot(vector<string> &);
-void findall(string);
-void findA(string ,string );
-vector<string> search(vector<string> &);
-void MoveCursor(int,int);
-void printsearch();
+int fileInfo(char*,char*);	// To display information about file
+int navigate(int ,struct dirent** ,struct termios ,struct termios ,string ); //For normal mode up/down/left/right etc..handling
+string commandMode(int,string,string); // To get into command mode
+int deleteFile(vector<string> &);	// For file deletion
+int createFile(vector<string> &);	// For file creation
+int createDir(vector<string> &);	// For directory creation
+vector<string> deleteDir(vector<string> &);	// For directory deletion
+int rename(vector<string> &);	// For rename file/directory
+string stringProcess(string fname);	// For processing string for relative path adjusment
+void printDirectoryList(string ,string );	// For print directory/file list 
+void deleteall(string);	// For delete directory recursion function
+int copyFile(vector<string> &);	// For copy file to get arguments
+int copyFile1(string,string);	// For copy file
+void copyall(string,string);	// For copy directory recursive
+int moveFile(vector<string> &);	// For move file
+int snapShot(vector<string> &);	// For snapshot
+void findall(string);	// For snapshot recursive function
+void findA(string ,string );	// For search recursive function
+vector<string> search(vector<string> &); // For search function to take arguments
+void MoveCursor(int,int);	// For cursor movement
+void printsearch();	// For printing search result

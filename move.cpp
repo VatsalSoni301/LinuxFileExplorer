@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int moveFile(vector<string> &commandSplit)
+int moveFile(vector<string> &commandSplit)	// It accepts arg from commandFile and move file/dir
 {
     string destination=commandSplit[commandSplit.size()-1];
     vector<string> v;

@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int createDir(vector<string> &commandSplit)
+int createDir(vector<string> &commandSplit)	// It accepts arg from commandFile and create a directory
 {
 	//struct stat fileStat,fileStat1;
 	string destination=commandSplit[commandSplit.size()-1];

@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int createFile(vector<string> &commandSplit)
+int createFile(vector<string> &commandSplit)	// It accepts arg from commandFile and create a file
 {
 	//struct stat fileStat,fileStat1;
 	string destination=commandSplit[commandSplit.size()-1];

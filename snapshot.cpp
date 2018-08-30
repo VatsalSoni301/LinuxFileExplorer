@@ -1,9 +1,10 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
 //vector<string> findf;
 fstream newfile;
 char *create_argument;
-int snapShot(vector<string> &commandSplit)
+int snapShot(vector<string> &commandSplit) // It accepts arg from commandFile and create snapshot
 {
 	create_argument= new char[commandSplit[2].length()+1];
 	strcpy(create_argument,commandSplit[2].c_str());
@@ -19,7 +20,7 @@ int snapShot(vector<string> &commandSplit)
 	return 0;
 }
 
-void findall(string rm)
+void findall(string rm)	// It recursively goto depth and take all file ans directories for snapshot
 {
 	//create_argument= new char[rm.length()+1];
 	//strcpy(create_argument,rm.c_str());

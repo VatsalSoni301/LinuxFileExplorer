@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int deleteFile(vector<string> &commandSplit)
+int deleteFile(vector<string> &commandSplit)	// It accepts arg from commandFile and delete file/files.
 {
     char *remove_argument;
     for(unsigned i=1;i<commandSplit.size();i++)

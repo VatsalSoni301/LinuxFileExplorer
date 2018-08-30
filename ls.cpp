@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int fileInfo(char* path,char* name)
+int fileInfo(char* path,char* name) // It prints all file info like permission/name etc..
 {
 	struct stat statObj;
     char* fname;
@@ -19,7 +20,6 @@ int fileInfo(char* path,char* name)
         cout<<"Error";
         //return 1;
     }
-
     // permission of a file (r-w-x of user,group and other)
 
     printf( (S_ISDIR(statObj.st_mode)) ? "d" : "-");

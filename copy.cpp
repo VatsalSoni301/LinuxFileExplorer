@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
-int copyFile(vector<string> &commandSplit)
+int copyFile(vector<string> &commandSplit)	// It accepts arg from commandFile copy File/directories
 {
     string destination=commandSplit[commandSplit.size()-1];
     struct stat statObj;
@@ -14,7 +15,6 @@ int copyFile(vector<string> &commandSplit)
             cout<<endl<<"No such directory exist"<<endl;
             //return 1;
         }
-
         if(S_ISDIR(statObj.st_mode))
         {
             int f=source.find_last_of("/\\");
@@ -37,7 +37,7 @@ int copyFile(vector<string> &commandSplit)
     return 0;
 }
 
-int copyFile1(string source,string destination)
+int copyFile1(string source,string destination) // It recursively go till depth for copying all child files/dir..
 {
 	struct stat fileStat,fileStat1;
     char block[1024];
@@ -59,26 +59,21 @@ int copyFile1(string source,string destination)
         cout<<"Error";
         //return 1;
     }   
-   if(stat(paste_argument,&fileStat1) < 0)    
-   {
+    if(stat(paste_argument,&fileStat1) < 0)    
+    {
         cout<<"Error";
         //return 1;
-   }
-
-    //const char *path="abc1.txt";
-    
+    }
     int status=chown(paste_argument, fileStat.st_uid, fileStat.st_gid);
     if(status!=0)
     {
         cout<<"Error";
     }
-
     status=chmod(paste_argument, fileStat.st_mode);
     if(status!=0)
     {
         cout<<"Error";
     }
-    
 	return 0;
 }
 
@@ -103,7 +98,6 @@ void copyall(string source,string destination)
         //cout<<"**"<<sourceconst<<"**";
         if(S_ISDIR(statObj.st_mode) && string(namelist[i]->d_name)!="." && string(namelist[i]->d_name)!="..")
         {
-            
             string s=destination+"/"+namelist[i]->d_name;
             char *create_dir_argument=new char[s.length()+1];
             strcpy(create_dir_argument,s.c_str());
@@ -117,6 +111,5 @@ void copyall(string source,string destination)
             if(string(namelist[i]->d_name)!="." && string(namelist[i]->d_name)!="..")
                 copyFile1(source+"/"+namelist[i]->d_name,destination+"/"+namelist[i]->d_name);
         }
-    }
-    
+    } 
 }

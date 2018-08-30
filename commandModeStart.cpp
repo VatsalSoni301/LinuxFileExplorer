@@ -1,8 +1,9 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 
 string home,current; 
 vector<string> searchResult;
-string commandMode(int row,string currentPath,string root)
+string commandMode(int row,string currentPath,string root) // For commandMode utility
 {
 	string command="";
 	home=root;
@@ -41,7 +42,6 @@ string commandMode(int row,string currentPath,string root)
 		{
 			unsigned int i=0;
 			int flag=0;
-			
 			while(i<command.length())
 			{
 				flag=0;
@@ -271,14 +271,14 @@ string commandMode(int row,string currentPath,string root)
   	}while(true);
 }
 
-void MoveCursor(int row,int col)
+void MoveCursor(int row,int col)	// For moving cursor to specified position
 {
 	printf("%c[2K", 27);
 	printf("%c[%d;%dH",27,row,col);
 	cout<<":";
 }
 
-string stringProcess(string fname)
+string stringProcess(string fname)  // To process input string for relative/absolute path
 {
 	if(fname[0]=='.')
 	{

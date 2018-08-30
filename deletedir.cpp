@@ -1,6 +1,7 @@
+//2018201005 Vatsal Soni
 #include "config.h"
 vector<string> deletefilesfolders;
-vector<string> deleteDir(vector<string> &commandSplit)
+vector<string> deleteDir(vector<string> &commandSplit) // It accepts arg from commandFile and call deleteall() for del.
 {
 	int status;
     char *remove_argument;
@@ -32,7 +33,7 @@ vector<string> deleteDir(vector<string> &commandSplit)
 	return deletefilesfolders;
 }
 
-void deleteall(string rm)
+void deleteall(string rm) // It recursively go till depth and delete all files/directories
 {
 	struct dirent **namelist;
 	int i;
