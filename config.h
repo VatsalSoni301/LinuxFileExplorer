@@ -17,7 +17,7 @@
 using namespace std;
 extern vector<string> searchResult;	// For storing search result
 
-int fileInfo(char*,char*);	// To display information about file
+int fileInfo(char*,char*,int);	// To display information about file
 int navigate(int ,struct dirent** ,struct termios ,struct termios ,string ); //For normal mode up/down/left/right etc..handling
 string commandMode(int,string,string); // To get into command mode
 int deleteFile(vector<string> &);	// For file deletion

@@ -80,7 +80,7 @@ int main(int argc,char **argv) // strating point of the project
             cout<<i<<endl;*/
         for(int i=0;i<=n1;i++)
         {
-            fileInfo(path,namelist[i]->d_name); //call file to display information of the file
+            fileInfo(path,namelist[i]->d_name,0); //call file to display information of the file
         }
         n--;
     }

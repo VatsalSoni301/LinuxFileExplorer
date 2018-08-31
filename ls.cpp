@@ -1,7 +1,7 @@
 //2018201005 Vatsal Soni
 #include "config.h"
 
-int fileInfo(char* path,char* name) // It prints all file info like permission/name etc..
+int fileInfo(char* path,char* name,int chk) // It prints all file info like permission/name etc..
 {
 	struct stat statObj;
     char* fname;
@@ -10,11 +10,18 @@ int fileInfo(char* path,char* name) // It prints all file info like permission/n
     register struct group *g;
     register struct passwd *pw;
     double size;
-    //cout<<path;
-    string s=string(path)+"/"+string(name);
-    fname=new char[s.length()+1];
-    strcpy(fname, s.c_str());
-    //cout<<fname<<endl;
+    if(chk==0)
+    {
+        string s=string(path)+"/"+string(name);
+        fname=new char[s.length()+1];
+        strcpy(fname, s.c_str());
+    }
+    else
+    {
+        string s=string(name);
+        fname=new char[s.length()+1];
+        strcpy(fname, s.c_str());
+    }
     if(stat(fname,&statObj) < 0)    
     {
         cout<<"Error";

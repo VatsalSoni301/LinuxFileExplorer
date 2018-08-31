@@ -68,7 +68,7 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            	n--;*/
 		            	for(int i=cur_cursor-1;i<=cur_cursor+n1-1;i++)
 		            	{
-		            		fileInfo(path,namelist[i]->d_name);
+		            		fileInfo(path,namelist[i]->d_name,0);
 		            	}
 		            }
 		            else
@@ -84,7 +84,7 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            		n1=w.ws_row-2;
 		            	for(int i=cur_cursor-1;i<=cur_cursor+n1-1 && i<n;i++)
 		            	{		
-		            		fileInfo(path,namelist[i]->d_name);
+		            		fileInfo(path,namelist[i]->d_name,0);
 		            	}
 		            }
 		            //printDirectoryList(current,root);
@@ -134,7 +134,7 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            	n=n-2;*/
 		            	for(int i=cur_cursor;i<=cur_cursor+n1;i++)
 		            	{
-		            		fileInfo(path,namelist[i]->d_name);
+		            		fileInfo(path,namelist[i]->d_name,0);
 		            	}	
 		            }
 		            else
@@ -151,7 +151,7 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            		n1=w.ws_row-2;
 		            	for(int i=cur_cursor;i<=cur_cursor+n1;i++)
 		            	{		
-		            		fileInfo(path,namelist[i]->d_name);
+		            		fileInfo(path,namelist[i]->d_name,0);
 		            	}
 		            }
                 	cur_cursor++;	//set window position
@@ -423,7 +423,7 @@ void printDirectoryList(string current,string root) // For printing list of file
 	    	}
 	    	for(int i=0;i<=n1;i++)
 	    	{
-	    		fileInfo(path,namelist[i]->d_name);
+	    		fileInfo(path,namelist[i]->d_name,0);
 	    	}
 	    	n=n-2;
     	}
@@ -445,7 +445,7 @@ void printDirectoryList(string current,string root) // For printing list of file
 	    		n1=w.ws_row-2;
 	    	for(int i=0;i<=n1;i++)
 	    	{		
-	    		fileInfo(path,namelist[i]->d_name);
+	    		fileInfo(path,namelist[i]->d_name,0);
 	    	}
 	    	n--;
     	}
@@ -473,7 +473,13 @@ void printsearch()	// For printing search Result
 	//cout<<n;
     for(int i=0;i<=n1;i++)
     {		
-    	cout<<searchResult[i]<<endl;
+    	int f=searchResult[i].find_last_of("/\\");
+		string path=searchResult[i].substr(0,f);
+		char *fpath=new char[path.length()+1];
+		strcpy(fpath,path.c_str());
+		char *fname=new char[searchResult[i].length()+1];
+		strcpy(fname,searchResult[i].c_str());
+    	fileInfo(fpath,fname,1);
     }
     n--;
  	//cout<<namelist[0]->d_name;   
