@@ -21,8 +21,3 @@
      For example :- If file name is "abc def" (without double quote) then user should enter
      "abc\ def" (without double quote).
 
-
-4 :- For opening file i have used xdg-open command but some files for which os does not have default 
-     application at that time error shown in terminal.
-     For example :- Object files(.O)
-
