@@ -309,9 +309,15 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            //system(char_array);
 		            //int f=current.find_last_of("/\\");
 		    		//current=current.substr(0,f);
+		    		int st=open("/dev/null",O_WRONLY);
+		    		dup2(st,2);
+		    		close(st);
 		    		pid_t pid=fork();
 		    		if(pid==0)
+		    		{
 		    			execlp("xdg-open","xdg-open",char_array,NULL);
+		    			exit(0);
+		    		}
 	    		}
 	    		else
 	    		{
@@ -370,9 +376,15 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		    		current=current.substr(0,f);
 		    		backstk.pop();
 
+		    		int st=open("/dev/null",O_WRONLY);
+		    		dup2(st,2);
+		    		close(st);
 		    		pid_t pid=fork();
 		    		if(pid==0)
+		    		{
 		    			execlp("xdg-open","xdg-open",char_array,NULL);
+		    			exit(0);
+		    		}
 		        }
 		        else if(string(namelist[cur_cursor+row-2]->d_name)!=".")
 		        {
