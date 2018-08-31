@@ -306,7 +306,7 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 		            string s=current;
 		            char_array=new char[s.length()+1];
 		            strcpy(char_array, s.c_str()); 
-		            system(char_array);
+		            //system(char_array);
 		            //int f=current.find_last_of("/\\");
 		    		//current=current.substr(0,f);
 		    		pid_t pid=fork();
