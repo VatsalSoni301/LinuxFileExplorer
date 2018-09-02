@@ -218,19 +218,22 @@ int navigate(int n1,struct dirent **namelist1,struct termios newrsettings,struct
 	    }
 	    else if(ch==104 || ch==72)   // If h or H press then open root directory
 	    {
-	    	cls;
-	    	cur_cursor=1;
-	    	backstk.push(root);
+	    	if(current!=root)
+	    	{
+	    		cls;
+		    	cur_cursor=1;
+		    	backstk.push(root);
 
-	    	while(!forstk.empty()){
-	    		forstk.pop();
+		    	while(!forstk.empty()){
+		    		forstk.pop();
+		    	}
+		    	current=root;
+		    	searchResult.clear();
+	           	printDirectoryList(current,root);	// Print directory and files
+	            row=1;
+	            pos();
+	            cur_cursor=1;
 	    	}
-	    	current=root;
-	    	searchResult.clear();
-           	printDirectoryList(current,root);	// Print directory and files
-            row=1;
-            pos();
-            cur_cursor=1;
 	    }
 	    else if(ch==127)  // If BackSpace key then 
 	    {
