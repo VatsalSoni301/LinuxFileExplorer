@@ -11,6 +11,7 @@ Please take care of the following things.
    - To compile tje project use "make" (without double quote) command.
    - Default mode is Normal mode and press ":" to switch to Command mode.
    - press ESC key to go back to normal mode from command mode. 
+   - press q key from normal mode to exit the project
 
 
 2 :- For files/directories which contain space in name, backslash(/) is used as delimeter. 
