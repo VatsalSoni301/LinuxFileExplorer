@@ -22,7 +22,7 @@ int fileInfo(char* path,char* name,int chk) // It prints all file info like perm
         fname=new char[s.length()+1];
         strcpy(fname, s.c_str());
     }
-    if(stat(fname,&statObj) < 0)    
+    if(stat(fname,&statObj) < 0)
     {
         cout<<"Error";
         //return 1;

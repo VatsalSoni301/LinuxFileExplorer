@@ -99,3 +99,12 @@ int main(int argc,char **argv) // strating point of the project
 }
 
 // http://www.cse.psu.edu/~kxc104/class/cmpen472/11f/hw/hw7/vt100ansi.htm
+
+// struct dirent {
+//     ino_t          d_ino;       /* inode number */
+//     off_t          d_off;       /* offset to the next dirent */
+//     unsigned short d_reclen;     length of this record 
+//     unsigned char  d_type;      /* type of file; not supported
+//                                    by all file system types */
+//     char           d_name[256]; /* filename */
+// };
